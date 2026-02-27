@@ -1,0 +1,57 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+FROM {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+RUN sudo ln -fs /bin/bash /bin/sh
+
+
+# Configure Locale
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+	echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \
+	dpkg-reconfigure --frontend=noninteractive locales && \
+	update-locale LANG=en_US.UTF-8
+
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+
+
+# Install initrc
+COPY setuser /bin/setuser
+COPY benchrc {{ BENCH_INITRC }}
+COPY benchcfg {{ BENCH_INITCFG }}
+
+RUN echo ". {{ BENCH_INITRC }}" >> /etc/skel/.bashrc && \
+	echo ". {{ BENCH_INITRC }}" >> /etc/profile.d/bench.sh
+
+RUN if [ ! -z {{ BENCH_IMG_GID }} ] && [ {{ BENCH_IMG_GID }} -ne 0 ]; then \
+		groupadd -g {{ BENCH_IMG_GID }} {{ BENCH_IMG_GROUP }}; \
+	fi; \
+	if [ ! -z {{ BENCH_IMG_UID }} ] && [ {{ BENCH_IMG_UID }} -ne 0 ]; then \
+		useradd -g {{ BENCH_IMG_GID }} -u {{ BENCH_IMG_UID }} -m -s /bin/bash {{ BENCH_IMG_USER }} && \
+		echo "{{ BENCH_IMG_USER }} ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers; \
+	fi
+
+RUN echo "root:{{ BENCH_ROOT_PASSWORD }}" | chpasswd
+RUN if [ ! -z {{ BENCH_IMG_UID }} ] && [ {{ BENCH_IMG_UID }} -ne 0 ]; then \
+		echo "{{ BENCH_IMG_USER }}:{{ BENCH_ROOT_PASSWORD }}" | chpasswd; \
+	fi
+
+
+USER {{ BENCH_IMG_USER }}
+
+
+COPY benchauthrc /etc/
+

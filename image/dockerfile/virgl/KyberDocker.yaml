@@ -1,0 +1,7 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+
+VIRGL_VERSION : kyber/1.1.0
+VIRGL_OUT : /usr/local/virgl

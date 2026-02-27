@@ -1,0 +1,1061 @@
+#!/bin/bash
+# This is a bash script that checks for Python 3 and then runs the Python script
+
+# Check if Python 3 is installed
+if ! command -v python3 &> /dev/null; then
+    echo "Python 3 not found, installing..."
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update && sudo apt-get install -y python3 && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+    else
+        echo "Error: Cannot install Python 3. apt-get not found."
+        exit 1
+    fi
+fi
+
+# Now run the Python part of the script
+python3 - "$@" << 'EOF'
+
+#!/usr/bin/env python3
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+# -*- coding: utf-8 -*-
+"""
+Kyber Package Installer
+
+Design:
+  This script automates the installation of Debian/Ubuntu packages from a configuration file.
+  It follows a modular, object-oriented design pattern with clear separation of concerns:
+
+  1. LanguageManager: Handles bilingual support (Chinese/English) and translations
+  2. ColorManager: Manages terminal color output for better user experience
+  3. LoggerManager: Configures logging with different verbosity levels
+  4. PackageManager: Core package operations (download, install, uninstall, verify)
+  5. ConfigManager: Parses and validates configuration files
+  6. KyberInstaller: Main orchestrator that coordinates all components
+
+Principles:
+  - Single Responsibility: Each class handles one specific aspect
+  - DRY (Don't Repeat Yourself): Common functionality is abstracted
+  - Encapsulation: Internal details are hidden behind clean interfaces
+  - Extensibility: Easy to add new features without modifying existing code
+
+Usage:
+  python3 kyberinstall [OPTIONS] <config_file>
+
+Options:
+  -f, --force          Force reinstall mismatched versions
+  -v, -vv, -vvv, -vvvv Increase verbosity (max 4 levels)
+  -p, --package <name>  Install only specified package
+  -d, --download-path <path>  Set download directory (default: ./dockpin-pkgs)
+  -r, --re-download     Force re-download all packages
+
+Examples:
+  python3 kyberinstall -fv config.txt
+  python3 kyberinstall -p nginx_1.24.0-1_amd64.deb config.txt
+  python3 kyberinstall -d /tmp/packages -r config.txt
+
+Requirements:
+  - wget: For downloading packages
+  - dpkg: For package installation
+  - Root privileges: For package installation/uninstallation
+"""
+
+import os
+import re
+import sys
+import logging
+import hashlib
+import locale
+import subprocess
+from pathlib import Path
+from typing import Optional, Tuple, Dict, List, Any
+from dataclasses import dataclass
+
+
+@dataclass
+class PackageInfo:
+    """Package information container"""
+    url: str
+    name: str
+    size: str
+    md5: str
+    line_num: int
+
+
+class LanguageManager:
+    """Manages bilingual support and translations"""
+
+    LANG_DICT = {
+        'zh': {
+            'config_not_exists': '配置文件 {0} 不存在！',
+            'parse_base_image': '解析到Docker基础镜像: {0}',
+            'line_format_error': '第{0}行格式错误，跳过。期望4列，实际{1}列: {2}',
+            'no_base_image': '配置文件中未找到base-image配置项！',
+            'parse_package_success': '成功解析 {0} 个软件包配置',
+            'package_not_in_config': '错误：指定的软件包 "{0}" 不存在于配置文件中！',
+            'available_packages': '配置文件中可用的软件包列表：{0}',
+            'md5_calc_failed': '计算文件 {0} MD5值失败: {1}',
+            'check_existing_file_md5': '检查已存在文件 {0} 的MD5值',
+            'existing_file_md5_match': '已存在文件MD5值匹配，跳过下载',
+            'existing_file_md5_mismatch': '已存在文件MD5值不匹配，将删除并重新下载',
+            'delete_invalid_file': '删除无效文件: {0}',
+            'start_download': '开始下载软件包: {0}',
+            'download_url': '下载URL: {0}',
+            'wget_not_found': '未找到wget命令，请先安装wget（apt install wget）',
+            'download_complete': '软件包 {0} 下载完成，开始MD5校验',
+            'md5_verify_failed': '软件包 {0} MD5校验失败！',
+            'expected_md5': '预期MD5: {0}',
+            'actual_md5': '实际MD5: {1}',
+            'md5_verify_passed': '软件包 {0} MD5校验通过',
+            'download_failed': '下载软件包 {0} 失败，wget返回码: {1}',
+            'download_exception': '下载软件包 {0} 时发生异常: {1}',
+            'process_package_exception': '处理软件包 {0} 时发生异常: {1}',
+            'create_download_dir': '创建下载目录: {0}',
+            'create_download_dir_success': '下载目录创建成功: {0}',
+            'create_download_dir_failed': '创建下载目录失败: {0}, 错误: {1}',
+            'extract_deb_info': '使用dpkg -I解析deb包 {0} 信息',
+            'deb_info_extract_success': '成功解析deb包信息 - 名称: {0}, 版本: {1}',
+            'deb_info_extract_failed': '解析deb包 {0} 信息失败: {1}',
+            'checking_installed_version': '使用dpkg -s检查 {0} 是否已安装...',
+            'package_not_installed': '软件包 {0} 未安装，继续安装流程',
+            'package_already_installed': '软件包 {0} 已安装',
+            'installed_version': '已安装版本: {0}',
+            'to_install_version': '待安装版本: {0}',
+            'version_match_skip': '版本一致，跳过安装',
+            'version_mismatch_error': '{0}，{1}、{2}，{3}',
+            'version_mismatch_terminate': '版本校验失败，脚本终止执行',
+            'force_mode_enabled': '已启用强制模式(-f)，将卸载旧版本并重新安装',
+            'force_uninstall_start': '开始强制卸载软件包 {0} (版本: {1})...',
+            'force_uninstall_success': '软件包 {0} 强制卸载成功',
+            'force_uninstall_failed': '软件包 {0} 强制卸载失败: {1}',
+            'start_install': '开始安装软件包: {0}',
+            'start_dpkg_log': '========== 开始输出dpkg安装日志 ==========',
+            'end_dpkg_log': '========== 结束输出dpkg安装日志 ==========',
+            'dpkg_not_found': '未找到dpkg命令，请确保在Debian/Ubuntu系统上运行',
+            'install_success': '软件包 {0} 安装成功',
+            'install_failed': '软件包 {0} 安装失败，返回码: {1}',
+            'install_exception': '安装软件包 {0} 时发生异常: {1}',
+            'detect_dpkg_error': '检测到dpkg安装返回非0，尝试修复依赖配置...',
+            'fix_dpkg_config': '执行 dpkg --configure -a 修复未配置的包...',
+            'fix_dpkg_config_success': '依赖配置修复成功！',
+            'fix_dpkg_config_failed': '依赖配置修复失败，返回码: {0}',
+            'check_package_status': '检查软件包 {0} 最终安装状态...',
+            'package_installed_ok': '软件包 {0} 最终安装成功',
+            'package_still_failed': '软件包 {0} 修复后仍未正常安装',
+            'cleanup_success': '已清理软件包文件: {0}',
+            'cleanup_failed': '清理软件包文件 {0} 失败: {1}',
+            'skip_cleanup': '跳过删除下载文件（未启用-r参数）: {0}',
+            'start_read_config': '开始读取配置文件: {0}',
+            'process_package': '===== 处理软件包: {0} =====',
+            'execution_complete': '===== 执行完成 =====',
+            'total_packages': '总计处理 {0} 个软件包',
+            'success_count': '成功: {0} 个',
+            'fail_count': '失败: {0} 个',
+            'failed_packages_list': '===== 安装失败的软件包列表 =====',
+            'no_failed_packages': '无安装失败的软件包',
+            'package_failure_reason': '{0}，{1}、{2}，{3}',
+            'summary_line': '软件包安装完成：总计 {0} 个，成功 {1} 个，失败 {2} 个',
+            'usage': '用法: {0} [-f/--force] [-v|-vv|-vvv|-vvvv] [-p/--package <包名>] [-d/--download-path <路径>] [-r/--re-download] <配置文件路径>',
+            'usage_force': '  -f/--force: 强制卸载版本不一致的软件包并重新安装',
+            'usage_verbose': '  -v/-vv/-vvv/-vvvv: 增加日志详细程度（最多4个v）',
+            'usage_package': '  -p/--package <包名>: 仅安装指定名称的软件包（必须存在于配置文件中）',
+            'usage_download_path': '  -d/--download-path <路径>: 指定软件包下载目录（默认: ./dockpin-pkgs）',
+            'usage_re_download': '  -r/--re-download: 强制重新下载所有软件包（忽略已存在文件），并删除安装后的包文件',
+            'usage_check': '  -c/--check: 检查lock文件中的软件包安装状态（不执行安装）',
+            'example': '示例:\n  python3 install_packages.py -fv config.txt\n  python3 install_packages.py -p nginx_1.24.0-1_amd64.deb config.txt\n  python3 install_packages.py -d /tmp/packages -r config.txt\n  python3 install_packages.py -c dockpin-apt.lock',
+            'dpkg_command_not_found': '系统中未找到dpkg命令，请确保运行在Debian/Ubuntu',
+            'root_permission_warning': '建议使用root权限运行此脚本（sudo），否则可能无法安装/卸载软件包',
+            'check_status_title': '===== 软件包安装状态检查 =====',
+            'package_installed': '已安装',
+            'package_version_mismatch': '版本不一致（清单中的版本：{0}，系统中安装的版本：{1}）',
+            'package_not_installed': '未安装',
+            'check_summary': '===== 状态统计 =====',
+            'check_installed_count': '已安装: {0} 个',
+            'check_mismatch_count': '版本不一致: {0} 个',
+            'check_not_installed_count': '未安装: {0} 个'
+        },
+        'en': {
+            'config_not_exists': 'Configuration file {0} does not exist!',
+            'parse_base_image': 'Parsed Docker base image: {0}',
+            'line_format_error': 'Line {0} format error, skipped. Expected 4 columns, got {1}: {2}',
+            'no_base_image': 'base-image configuration item not found in config file!',
+            'parse_package_success': 'Successfully parsed {0} package configurations',
+            'package_not_in_config': 'Error: Specified package "{0}" does not exist in configuration file!',
+            'available_packages': 'Available packages in config file: {0}',
+            'md5_calc_failed': 'Failed to calculate MD5 for file {0}: {1}',
+            'check_existing_file_md5': 'Checking MD5 of existing file {0}',
+            'existing_file_md5_match': 'Existing file MD5 matches, skip download',
+            'existing_file_md5_mismatch': 'Existing file MD5 mismatch, will delete and re-download',
+            'delete_invalid_file': 'Deleting invalid file: {0}',
+            'start_download': 'Starting to download package: {0}',
+            'download_url': 'Download URL: {0}',
+            'wget_not_found': 'wget command not found, please install wget first (apt install wget)',
+            'download_complete': 'Package {0} downloaded successfully, starting MD5 verification',
+            'md5_verify_failed': 'Package {0} MD5 verification failed!',
+            'expected_md5': 'Expected MD5: {0}',
+            'actual_md5': 'Actual MD5: {1}',
+            'md5_verify_passed': 'Package {0} MD5 verification passed',
+            'download_failed': 'Failed to download package {0}, wget return code: {1}',
+            'download_exception': 'Exception occurred while downloading package {0}: {1}',
+            'process_package_exception': 'Exception occurred while processing package {0}: {1}',
+            'create_download_dir': 'Creating download directory: {0}',
+            'create_download_dir_success': 'Download directory created successfully: {0}',
+            'create_download_dir_failed': 'Failed to create download directory: {0}, error: {1}',
+            'extract_deb_info': 'Extracting deb package info for {0} using dpkg -I',
+            'deb_info_extract_success': 'Successfully extracted deb info - Name: {0}, Version: {1}',
+            'deb_info_extract_failed': 'Failed to extract deb info for {0}: {1}',
+            'checking_installed_version': 'Checking if {0} is installed using dpkg -s...',
+            'package_not_installed': 'Package {0} is not installed, proceeding with installation',
+            'package_already_installed': 'Package {0} is already installed',
+            'installed_version': 'Installed version: {0}',
+            'to_install_version': 'Version to install: {0}',
+            'version_match_skip': 'Versions match, skipping installation',
+            'version_mismatch_error': '{0}, {1}、{2}, {3}',
+            'version_mismatch_terminate': 'Version check failed, terminating script execution',
+            'force_mode_enabled': 'Force mode (-f) enabled, will uninstall old version and reinstall',
+            'force_uninstall_start': 'Starting force uninstall of package {0} (version: {1})...',
+            'force_uninstall_success': 'Package {0} force uninstalled successfully',
+            'force_uninstall_failed': 'Failed to force uninstall package {0}: {1}',
+            'start_install': 'Starting to install package: {0}',
+            'start_dpkg_log': '========== Start of dpkg installation log ==========',
+            'end_dpkg_log': '========== End of dpkg installation log ==========',
+            'dpkg_not_found': 'dpkg command not found, please ensure running on Debian/Ubuntu system',
+            'install_success': 'Package {0} installed successfully',
+            'install_failed': 'Package {0} installation failed, return code: {1}',
+            'install_exception': 'Exception occurred while installing package {0}: {1}',
+            'detect_dpkg_error': 'Detected non-zero return code from dpkg install, attempting to fix dependency configuration...',
+            'fix_dpkg_config': 'Executing dpkg --configure -a to fix unconfigured packages...',
+            'fix_dpkg_config_success': 'Dependency configuration fixed successfully!',
+            'fix_dpkg_config_failed': 'Failed to fix dependency configuration, return code: {0}',
+            'check_package_status': 'Checking final installation status of package {0}...',
+            'package_installed_ok': 'Package {0} installed successfully after fix',
+            'package_still_failed': 'Package {0} still not installed correctly after fix',
+            'cleanup_success': 'Cleaned up package file: {0}',
+            'cleanup_failed': 'Failed to clean up package file {0}: {1}',
+            'skip_cleanup': 'Skip deleting downloaded file ( -r parameter not enabled): {0}',
+            'start_read_config': 'Starting to read configuration file: {0}',
+            'process_package': '===== Processing package: {0} =====',
+            'execution_complete': '===== Execution completed =====',
+            'total_packages': 'Total processed {0} packages',
+            'success_count': 'Success: {0}',
+            'fail_count': 'Failed: {0}',
+            'failed_packages_list': '===== List of Failed Packages =====',
+            'no_failed_packages': 'No failed packages',
+            'package_failure_reason': '{0}, {1}、{2}, {3}',
+            'summary_line': 'Package installation completed: Total {0}, Success {1}, Failed {2}',
+            'usage': 'Usage: {0} [-f/--force] [-v|-vv|-vvv|-vvvv] [-p/--package <package_name>] [-d/--download-path <path>] [-r/--re-download] <config_file_path>',
+            'usage_force': '  -f/--force: Force uninstall mismatched version and reinstall',
+            'usage_verbose': '  -v/-vv/-vvv/-vvvv: Increase verbosity (max 4 v)',
+            'usage_package': '  -p/--package <package_name>: Install only specified package (must exist in config file)',
+            'usage_download_path': '  -d/--download-path <path>: Specify package download directory (default: ./dockpin-pkgs)',
+            'usage_re_download': '  -r/--re-download: Force re-download all packages (ignore existing files) and delete package files after installation',
+            'usage_check': '  -c/--check: Check package installation status in lock file (no installation)',
+            'example': 'Examples:\n  python3 install_packages.py -fv config.txt\n  python3 install_packages.py -p nginx_1.24.0-1_amd64.deb config.txt\n  python3 install_packages.py -d /tmp/packages -r config.txt\n  python3 install_packages.py -c dockpin-apt.lock',
+            'dpkg_command_not_found': 'dpkg command not found in system, please ensure running on Debian/Ubuntu',
+            'root_permission_warning': 'It is recommended to run this script with root privileges (sudo), otherwise package install/uninstall may fail',
+            'check_status_title': '===== Package Installation Status Check =====',
+            'package_installed': 'Installed',
+            'package_version_mismatch': 'Version mismatch (list version: {0}, installed version: {1})',
+            'package_not_installed': 'Not installed',
+            'check_summary': '===== Status Summary =====',
+            'check_installed_count': 'Installed: {0}',
+            'check_mismatch_count': 'Version mismatch: {0}',
+            'check_not_installed_count': 'Not installed: {0}'
+        }
+    }
+
+    def __init__(self):
+        self.lang = self._detect_language()
+
+    def _detect_language(self) -> str:
+        """Detect system locale to determine display language"""
+        try:
+            import locale
+            # Try to get locale settings
+            locale.setlocale(locale.LC_ALL, '')
+            lang = locale.getlocale()[0]
+            if lang and lang.startswith('zh'):
+                return 'zh'
+        except Exception:
+            pass
+        return 'en'
+
+    def translate(self, key: str, *args, color: Optional[str] = None) -> str:
+        """Translate key to corresponding language with optional color formatting"""
+        text = self.LANG_DICT[self.lang][key].format(*args)
+        return self._apply_color(text, color)
+
+    def _apply_color(self, text: str, color: Optional[str]) -> str:
+        """Apply color to text if specified"""
+        if not color:
+            return text
+        color_manager = ColorManager()
+        color_code = getattr(color_manager, color, '')
+        return f"{color_code}{text}{color_manager.RESET}"
+
+
+class ColorManager:
+    """Manages terminal color output"""
+
+    RESET = '\033[0m'
+    GREEN = '\033[92m'
+    RED = '\033[91m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+
+    def __init__(self):
+        self._disable_if_not_tty()
+
+    def _disable_if_not_tty(self):
+        """Disable colors if output is not a terminal"""
+        if not sys.stdout.isatty():
+            self.RESET = ''
+            self.GREEN = ''
+            self.RED = ''
+            self.YELLOW = ''
+            self.BLUE = ''
+
+
+class SilentFilter(logging.Filter):
+    """Silent mode filter: Only allow ERROR/CRITICAL and final summary logs in default mode"""
+
+    def __init__(self):
+        super().__init__()
+        self.summary_logs = set()
+
+    def add_summary_log(self, msg: str):
+        """Mark summary log to allow output"""
+        self.summary_logs.add(msg)
+
+    def filter(self, record):
+        if record.levelno >= logging.ERROR:
+            return True
+        if record.msg in self.summary_logs:
+            return True
+        return False
+
+
+class LoggerManager:
+    """Manages logging configuration with different verbosity levels"""
+
+    LOG_CONFIGS = {
+        0: {'level': logging.ERROR, 'format': '%(message)s'},
+        1: {'level': logging.INFO, 'format': '%(message)s'},
+        2: {'level': logging.DEBUG, 'format': '[DEBUG] %(message)s'},
+        3: {'level': logging.DEBUG, 'format': '[DEBUG] %(module)s:%(lineno)d - %(message)s'},
+        4: {'level': logging.DEBUG, 'format': '[DEBUG] %(module)s:%(lineno)d - %(process)d:%(thread)d - %(message)s'}
+    }
+
+    def __init__(self, verbose_level: int = 0):
+        self.verbose_level = min(verbose_level, 4)
+        self.color_manager = ColorManager()
+        self.logger = self._setup_logger()
+
+    def _setup_logger(self) -> logging.Logger:
+        """Configure and return logger"""
+        logger = logging.getLogger(__name__)
+        logger.setLevel(self.LOG_CONFIGS[self.verbose_level]['level'])
+        logger.handlers.clear()
+
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setLevel(self.LOG_CONFIGS[self.verbose_level]['level'])
+
+        if self.verbose_level == 0:
+            silent_filter = SilentFilter()
+            console_handler.addFilter(silent_filter)
+            logger.silent_filter = silent_filter
+
+        formatter = self._create_colored_formatter()
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+        return logger
+
+    def _create_colored_formatter(self) -> logging.Formatter:
+        """Create colored formatter for log output"""
+        class ColoredFormatter(logging.Formatter):
+            def __init__(self, fmt: str, color_manager: ColorManager):
+                super().__init__(fmt)
+                self.color_manager = color_manager
+
+            def format(self, record):
+                msg = record.msg
+                if record.levelno == logging.INFO:
+                    if any(word in str(msg).lower() for word in ['成功', 'success', 'passed', '校验通过', '跳过安装', 'downloading', 'installing']):
+                        record.msg = f"{self.color_manager.GREEN}{msg}{self.color_manager.RESET}"
+                elif record.levelno == logging.ERROR:
+                    record.msg = f"{self.color_manager.RED}{msg}{self.color_manager.RESET}"
+                elif record.levelno == logging.WARNING:
+                    record.msg = f"{self.color_manager.YELLOW}{msg}{self.color_manager.RESET}"
+                elif record.levelno == logging.DEBUG:
+                    record.msg = f"{self.color_manager.BLUE}{msg}{self.color_manager.RESET}"
+                return super().format(record)
+
+        return ColoredFormatter(self.LOG_CONFIGS[self.verbose_level]['format'], self.color_manager)
+
+
+class PackageManager:
+    """Manages package operations: download, install, uninstall, verify"""
+
+    def __init__(self, logger: logging.Logger, language_manager: LanguageManager):
+        self.logger = logger
+        self.lang = language_manager
+
+    def get_deb_package_version(self, deb_file_path: str) -> Tuple[Optional[str], Optional[str]]:
+        """Extract package name and version from deb file using dpkg -I"""
+        self.logger.debug(self.lang.translate('extract_deb_info', deb_file_path))
+
+        try:
+            result = subprocess.run(['dpkg', '-I', deb_file_path], capture_output=True, text=True)
+
+            if result.returncode != 0:
+                self.logger.error(self.lang.translate('deb_info_extract_failed', deb_file_path, result.stderr))
+                return None, None
+
+            package_name = None
+            version = None
+
+            for line in result.stdout.split('\n'):
+                line = line.strip()
+                if line.lower().startswith('package:'):
+                    package_name = line.split(':', 1)[1].strip()
+                elif line.lower().startswith('version:'):
+                    version = line.split(':', 1)[1].strip()
+
+                if package_name and version:
+                    break
+
+            if not package_name or not version:
+                self.logger.error(self.lang.translate('deb_info_extract_failed', deb_file_path, 'Package or Version field not found'))
+                return None, None
+
+            self.logger.info(self.lang.translate('deb_info_extract_success', package_name, version))
+            return package_name, version
+
+        except Exception as e:
+            self.logger.error(self.lang.translate('deb_info_extract_failed', deb_file_path, str(e)))
+            return None, None
+
+    def get_installed_package_version(self, package_name: str) -> Optional[str]:
+        """Get installed package version using dpkg -s"""
+        self.logger.debug(self.lang.translate('checking_installed_version', package_name))
+
+        try:
+            result = subprocess.run(['dpkg', '-s', package_name], capture_output=True, text=True)
+
+            if result.returncode == 1:
+                self.logger.debug(self.lang.translate('package_not_installed', package_name))
+                return None
+
+            if result.returncode != 0:
+                self.logger.error(f"dpkg -s execution failed, return code: {result.returncode}")
+                return None
+
+            for line in result.stdout.split('\n'):
+                if line.startswith('Version:'):
+                    version = line.split(':', 1)[1].strip()
+                    self.logger.debug(self.lang.translate('installed_version', version))
+                    return version
+
+            self.logger.error(f"Version information for {package_name} not found")
+            return None
+
+        except Exception as e:
+            self.logger.error(f"Exception occurred while checking {package_name} version: {str(e)}")
+            return None
+
+    def get_installed_version(self, package_name: str) -> Optional[str]:
+        """Get installed package version, return None if not installed"""
+        try:
+            result = subprocess.run(['dpkg', '-s', package_name], capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                return None
+            
+            for line in result.stdout.split('\n'):
+                if line.startswith('Version:'):
+                    return line.split(':', 1)[1].strip()
+            
+            return None
+        except Exception:
+            return None
+
+    def force_uninstall_package(self, package_name: str, installed_version: str) -> Tuple[bool, Optional[str]]:
+        """Force uninstall package using dpkg -P"""
+        self.logger.debug(self.lang.translate('force_uninstall_start', package_name, installed_version))
+
+        try:
+            env = os.environ.copy()
+            env['DEBIAN_FRONTEND'] = 'noninteractive'
+
+            result = subprocess.run(
+                ['dpkg', '-P', package_name],
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+                text=True,
+                env=env
+            )
+
+            if result.returncode == 0:
+                self.logger.debug(self.lang.translate('force_uninstall_success', package_name))
+                return True, None
+            else:
+                error_msg = f"Uninstall return code: {result.returncode}"
+                self.logger.error(self.lang.translate('force_uninstall_failed', package_name, error_msg))
+                return False, error_msg
+
+        except Exception as e:
+            error_msg = str(e)
+            self.logger.error(self.lang.translate('force_uninstall_failed', package_name, error_msg))
+            return False, error_msg
+
+    def check_package_version(self, deb_file_path: str, package_info: PackageInfo, force_mode: bool) -> Tuple[bool, Optional[str]]:
+        """Check package version and determine if installation should proceed"""
+        package_name, target_version = self.get_deb_package_version(deb_file_path)
+        if not package_name or not target_version:
+            return False, self.lang.translate('deb_info_extract_failed', deb_file_path, 'Failed to parse package name and version')
+
+        installed_version = self.get_installed_package_version(package_name)
+
+        if installed_version is False:
+            return False, f"dpkg -s execution failed while checking installed version of {package_name}"
+
+        if installed_version is None:
+            self.logger.info(self.lang.translate('package_not_installed', package_name))
+            return True, None
+
+        self.logger.info(self.lang.translate('package_already_installed', package_name))
+        self.logger.info(self.lang.translate('installed_version', installed_version))
+        self.logger.info(self.lang.translate('to_install_version', target_version))
+
+        if installed_version == target_version:
+            self.logger.info(self.lang.translate('version_match_skip'))
+            return False, None
+
+        pkg_url = package_info.url
+        error_msg = self.lang.translate('version_mismatch_error', package_name, target_version, pkg_url, installed_version)
+        self.logger.error(error_msg)
+
+        if force_mode:
+            self.logger.warning(self.lang.translate('force_mode_enabled'))
+            uninstall_success, uninstall_error = self.force_uninstall_package(package_name, installed_version)
+            if uninstall_success:
+                return True, None
+            else:
+                return False, uninstall_error
+        else:
+            self.logger.error(self.lang.translate('version_mismatch_terminate'))
+            return False, error_msg
+
+    def calculate_file_md5(self, file_path: str, chunk_size: int = 8192) -> Optional[str]:
+        """Calculate MD5 hash of a file"""
+        self.logger.debug(f"Calculating MD5 for file: {file_path}")
+
+        try:
+            md5_hash = hashlib.md5()
+            with open(file_path, 'rb') as f:
+                while chunk := f.read(chunk_size):
+                    md5_hash.update(chunk)
+
+            md5_value = md5_hash.hexdigest().lower()
+            self.logger.debug(f"Calculated MD5: {md5_value}")
+            return md5_value
+
+        except Exception as e:
+            self.logger.error(self.lang.translate('md5_calc_failed', file_path, str(e)))
+            return None
+
+    def download_package(self, package_info: PackageInfo, download_path: str, re_download: bool = False) -> Tuple[Optional[str], Optional[str]]:
+        """Download package using wget and verify MD5"""
+        url = package_info.url
+        name = package_info.name
+        expected_md5 = package_info.md5
+        file_path = Path(download_path) / name
+
+        self.logger.debug(self.lang.translate('start_download', name))
+        self.logger.debug(self.lang.translate('download_url', url))
+
+        if not re_download and file_path.exists():
+            self.logger.debug(self.lang.translate('check_existing_file_md5', file_path))
+            actual_md5 = self.calculate_file_md5(str(file_path))
+
+            if actual_md5 == expected_md5:
+                self.logger.info(self.lang.translate('existing_file_md5_match', file_path))
+                return str(file_path), None
+            else:
+                self.logger.warning(self.lang.translate('existing_file_md5_mismatch'))
+                self.logger.warning(f"{self.lang.translate('expected_md5', expected_md5)} {self.lang.translate('actual_md5', actual_md5)}")
+                try:
+                    file_path.unlink()
+                    self.logger.debug(self.lang.translate('delete_invalid_file', file_path))
+                except Exception as e:
+                    self.logger.error(self.lang.translate('delete_invalid_file', file_path))
+                    return None, f"Failed to delete invalid file {file_path}: {str(e)}"
+
+        try:
+            try:
+                subprocess.run(['wget', '--version'], capture_output=True, check=True)
+            except FileNotFoundError:
+                error_msg = self.lang.translate('wget_not_found')
+                self.logger.error(error_msg)
+                return None, error_msg
+
+            wget_cmd = ['wget', '--progress=bar:force', '-O', str(file_path), url]
+            if self.logger.level > logging.INFO:
+                wget_cmd.insert(2, '-q')
+
+            self.logger.debug(f"Executing wget command: {' '.join(wget_cmd)}")
+
+            result = subprocess.run(wget_cmd, capture_output=True, text=True)
+
+            if result.returncode != 0:
+                error_msg = self.lang.translate('download_failed', name, result.returncode)
+                if result.stderr:
+                    error_msg += f" | {result.stderr.strip()}"
+                self.logger.error(error_msg)
+                if file_path.exists():
+                    file_path.unlink()
+                return None, error_msg
+
+            self.logger.debug(self.lang.translate('download_complete', name))
+
+            actual_md5 = self.calculate_file_md5(str(file_path))
+            if actual_md5 is None:
+                file_path.unlink()
+                return None, self.lang.translate('md5_calc_failed', name, 'Unknown error')
+
+            if actual_md5 != expected_md5:
+                error_msg = f"{self.lang.translate('md5_verify_failed', name)} {self.lang.translate('expected_md5', expected_md5)} {self.lang.translate('actual_md5', actual_md5)}"
+                self.logger.error(error_msg)
+                file_path.unlink()
+                return None, error_msg
+
+            self.logger.debug(self.lang.translate('md5_verify_passed', name))
+            return str(file_path), None
+
+        except Exception as e:
+            error_msg = self.lang.translate('download_exception', name, str(e))
+            self.logger.error(error_msg)
+            if file_path.exists():
+                file_path.unlink()
+            return None, error_msg
+
+    def install_package(self, file_path: str) -> Tuple[bool, Optional[str]]:
+        """Install package with dpkg in non-interactive mode"""
+        self.logger.debug(self.lang.translate('start_install', file_path))
+        self.logger.debug(self.lang.translate('start_dpkg_log'))
+
+        try:
+            env = os.environ.copy()
+            env['DEBIAN_FRONTEND'] = 'noninteractive'
+
+            cmd = ['dpkg', '-i', '--force-confdef', '--force-depends', '--force-confold', file_path]
+            self.logger.debug(f"Executing install command: {' '.join(cmd)}")
+
+            result = subprocess.run(cmd, stdout=sys.stdout, stderr=sys.stderr, text=True, env=env)
+
+            self.logger.debug(self.lang.translate('end_dpkg_log'))
+
+            if result.returncode == 0:
+                self.logger.debug(self.lang.translate('install_success', file_path))
+                return True, None
+
+            self.logger.warning(self.lang.translate('detect_dpkg_error'))
+            self.logger.warning(self.lang.translate('fix_dpkg_config'))
+
+            config_result = subprocess.run(['dpkg', '--configure', '-a'], stdout=sys.stdout, stderr=sys.stderr, text=True, env=env)
+
+            if config_result.returncode != 0:
+                error_msg = self.lang.translate('fix_dpkg_config_failed', config_result.returncode)
+                self.logger.error(error_msg)
+                return False, f"{self.lang.translate('install_failed', file_path, result.returncode)} | {error_msg}"
+
+            self.logger.info(self.lang.translate('fix_dpkg_config_success'))
+
+            pkg_basename = os.path.basename(file_path)
+            pkg_name = pkg_basename.split('_')[0] if '_' in pkg_basename else pkg_basename
+
+            self.logger.debug(self.lang.translate('check_package_status', pkg_name))
+
+            check_result = subprocess.run(['dpkg', '-s', pkg_name], capture_output=True, text=True)
+
+            if "install ok installed" in check_result.stdout:
+                self.logger.info(self.lang.translate('package_installed_ok', file_path))
+                return True, None
+            else:
+                error_msg = self.lang.translate('package_still_failed', file_path)
+                self.logger.error(error_msg)
+                return False, f"{self.lang.translate('install_failed', file_path, result.returncode)} | {error_msg}"
+
+        except FileNotFoundError:
+            error_msg = self.lang.translate('dpkg_not_found')
+            self.logger.error(error_msg)
+            return False, error_msg
+        except Exception as e:
+            error_msg = self.lang.translate('install_exception', file_path, str(e))
+            self.logger.error(error_msg)
+            return False, error_msg
+
+    def cleanup_package(self, file_path: str, re_download: bool = False):
+        """Delete installed package file if re_download is True"""
+        if not re_download:
+            self.logger.debug(self.lang.translate('skip_cleanup', file_path))
+            return
+
+        self.logger.debug(f"Cleaning up package file: {file_path}")
+        file_path_obj = Path(file_path)
+        if file_path_obj.exists():
+            try:
+                file_path_obj.unlink()
+                self.logger.debug(self.lang.translate('cleanup_success', file_path))
+            except Exception as e:
+                self.logger.error(self.lang.translate('cleanup_failed', file_path, str(e)))
+        else:
+            self.logger.debug(f"Package file {file_path} does not exist, skip cleanup")
+
+
+class ConfigManager:
+    """Manages configuration file loading and parsing"""
+
+    def __init__(self, logger: logging.Logger, language_manager: LanguageManager):
+        self.logger = logger
+        self.lang = language_manager
+
+    def load_config(self, config_file: str) -> Tuple[Optional[str], List[PackageInfo]]:
+        """Load and parse configuration file"""
+        base_image = None
+        packages = []
+
+        if not os.path.exists(config_file):
+            self.logger.error(self.lang.translate('config_not_exists', config_file))
+            sys.exit(1)
+
+        self.logger.debug(f"Reading config file: {config_file}")
+
+        with open(config_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+
+        self.logger.debug(f"Read {len(lines)} lines from config file")
+
+        for line_num, line in enumerate(lines, 1):
+            line_stripped = line.strip()
+
+            if not line_stripped or line_stripped.startswith('#'):
+                self.logger.debug(f"Skipping line {line_num}: empty/comment")
+                continue
+
+            if line_stripped.startswith('base-image='):
+                base_image = line_stripped.split('=', 1)[1].strip()
+                self.logger.debug(self.lang.translate('parse_base_image', base_image))
+                continue
+
+            parts = re.split(r'\s+', line_stripped)
+            if len(parts) != 4:
+                self.logger.warning(self.lang.translate('line_format_error', line_num, len(parts), line_stripped))
+                continue
+
+            url, name, size, md5 = parts
+            self.logger.debug(f"Parsed package line {line_num}: url={url[:50]}, name={name}, size={size}, md5={md5[:10]}...")
+
+            url = url.strip("'")
+
+            if md5.startswith('MD5Sum:'):
+                md5 = md5.split(':', 1)[1].strip()
+
+            packages.append(PackageInfo(
+                url=url,
+                name=name,
+                size=size,
+                md5=md5.lower(),
+                line_num=line_num
+            ))
+
+        if not base_image:
+            self.logger.error(self.lang.translate('no_base_image'))
+            sys.exit(1)
+
+        self.logger.debug(self.lang.translate('parse_package_success', len(packages)))
+        return base_image, packages
+
+    def create_download_directory(self, download_path: str) -> Tuple[bool, Optional[str]]:
+        """Create download directory if it doesn't exist"""
+        self.logger.debug(self.lang.translate('create_download_dir', download_path))
+
+        try:
+            Path(download_path).mkdir(parents=True, exist_ok=True)
+            self.logger.info(self.lang.translate('create_download_dir_success', download_path))
+            return True, None
+        except Exception as e:
+            error_msg = str(e)
+            self.logger.error(self.lang.translate('create_download_dir_failed', download_path, error_msg))
+            return False, error_msg
+
+
+class KyberInstaller:
+    """Main orchestrator for package installation process"""
+
+    def __init__(self, verbose_level: int = 0):
+        self.language_manager = LanguageManager()
+        self.logger_manager = LoggerManager(verbose_level)
+        self.logger = self.logger_manager.logger
+        self.package_manager = PackageManager(self.logger, self.language_manager)
+        self.config_manager = ConfigManager(self.logger, self.language_manager)
+        self.color_manager = ColorManager()
+
+    def _parse_arguments(self) -> Dict[str, Any]:
+        """Parse command line arguments"""
+        force_mode = False
+        verbose_level = 0
+        config_file = None
+        target_package = None
+        download_path = None
+        re_download = False
+        check_only = False
+
+        args = sys.argv[1:]
+
+        while args and args[0].startswith('-'):
+            flag = args.pop(0)
+            if flag in ['-f', '--force']:
+                force_mode = True
+            elif flag.startswith('-v'):
+                verbose_level = min(len(flag) - 1, 4)
+            elif flag in ['-p', '--package']:
+                if not args:
+                    self._print_usage()
+                    sys.exit(1)
+                target_package = args.pop(0)
+            elif flag in ['-d', '--download-path']:
+                if not args:
+                    self._print_usage()
+                    sys.exit(1)
+                download_path = args.pop(0)
+            elif flag in ['-r', '--re-download']:
+                re_download = True
+            elif flag in ['-c', '--check']:
+                check_only = True
+            else:
+                self._print_usage()
+                sys.exit(1)
+
+        if len(args) != 1:
+            self._print_usage()
+            sys.exit(1)
+
+        config_file = args[0]
+
+        if download_path is None:
+            download_path = os.path.join(os.getcwd(), 'dockpin-pkgs')
+
+        return {
+            'force_mode': force_mode,
+            'verbose_level': verbose_level,
+            'config_file': config_file,
+            'target_package': target_package,
+            'download_path': download_path,
+            're_download': re_download,
+            'check_only': check_only
+        }
+
+    def _print_usage(self):
+        """Print usage information"""
+        script_name = 'kyberinstall'
+        print(self.language_manager.translate('usage', script_name))
+        print(self.language_manager.translate('usage_force'))
+        print(self.language_manager.translate('usage_verbose'))
+        print(self.language_manager.translate('usage_package'))
+        print(self.language_manager.translate('usage_download_path'))
+        print(self.language_manager.translate('usage_re_download'))
+        print(self.language_manager.translate('usage_check'))
+        print(self.language_manager.translate('example'))
+
+    def _validate_package(self, packages: List[PackageInfo], target_package: str) -> List[PackageInfo]:
+        """Validate and filter packages based on target_package"""
+        if not target_package:
+            return packages
+
+        package_names = [pkg.name for pkg in packages]
+
+        if target_package not in package_names:
+            error_msg = self.language_manager.translate('package_not_in_config', target_package, color='RED')
+            self.logger.error(error_msg)
+            available_msg = self.language_manager.translate('available_packages', ', '.join(package_names), color='YELLOW')
+            self.logger.warning(available_msg)
+            sys.exit(1)
+
+        filtered_packages = [pkg for pkg in packages if pkg.name == target_package]
+        self.logger.info(f"Processing only specified package: {target_package}")
+        return filtered_packages
+
+    def run(self):
+        """Main execution method"""
+        args = self._parse_arguments()
+
+        if args['verbose_level'] > 0:
+            self.logger.debug(f"Script started with arguments: {sys.argv}")
+            self.logger.debug(f"Force mode: {args['force_mode']}, Verbose level: {args['verbose_level']}, Target package: {args['target_package']}")
+            self.logger.debug(f"Download path: {args['download_path']}, Re-download: {args['re_download']}, Config file: {args['config_file']}, Check only: {args['check_only']}")
+
+        if args['check_only']:
+            self._check_package_status(args['config_file'])
+            return
+
+        dir_success, dir_error = self.config_manager.create_download_directory(args['download_path'])
+        if not dir_success:
+            self.logger.error(f"Failed to create download directory: {dir_error}")
+            sys.exit(1)
+
+        failed_packages = {}
+        base_image, packages = self.config_manager.load_config(args['config_file'])
+        packages = self._validate_package(packages, args['target_package'])
+
+        success_count = 0
+        fail_count = 0
+
+        for package in packages:
+            package_name = package.name
+            package_url = package.url
+
+            if args['verbose_level'] > 0:
+                self.logger.info(f"\n{self.language_manager.translate('process_package', package_name)}")
+            self.logger.debug(f"Package info: url={package.url}, name={package.name}, size={package.size}, md5={package.md5}")
+
+            file_path, download_error = self.package_manager.download_package(package, args['download_path'], args['re_download'])
+            if not file_path:
+                fail_count += 1
+                failed_packages[package_name] = (package_name, "", package_url, download_error)
+                continue
+
+            proceed_install, version_error = self.package_manager.check_package_version(file_path, package, args['force_mode'])
+            if not proceed_install:
+                if version_error:
+                    pkg_name, target_version = self.package_manager.get_deb_package_version(file_path)
+                    fail_count += 1
+                    failed_packages[package_name] = (pkg_name or package_name, target_version or "", package_url, version_error)
+                    if not args['force_mode']:
+                        self.logger.error(self.language_manager.translate('version_mismatch_terminate'))
+                        self._print_summary(len(packages), success_count, fail_count, failed_packages)
+                        sys.exit(1)
+                else:
+                    self.package_manager.cleanup_package(file_path, args['re_download'])
+                    continue
+
+            install_success, install_error = self.package_manager.install_package(file_path)
+            if install_success:
+                success_count += 1
+            else:
+                pkg_name, target_version = self.package_manager.get_deb_package_version(file_path)
+                fail_count += 1
+                failed_packages[package_name] = (pkg_name or package_name, target_version or "", package_url, install_error)
+
+            self.package_manager.cleanup_package(file_path, args['re_download'])
+
+        self._print_summary(len(packages), success_count, fail_count, failed_packages)
+
+    def _check_package_status(self, config_file: str):
+        """Check package installation status from lock file"""
+        print(self.language_manager.translate('check_status_title'))
+        
+        base_image, packages = self.config_manager.load_config(config_file)
+        packages = self._validate_package(packages, None)
+        
+        installed_count = 0
+        mismatch_count = 0
+        not_installed_count = 0
+        
+        for package in packages:
+            package_name = package.name
+            
+            pkg_name, target_version = self._extract_package_info_from_filename(package.name)
+            
+            if not pkg_name:
+                print(f"{self.color_manager.RED}{package_name}: Failed to extract package name{self.color_manager.RESET}")
+                not_installed_count += 1
+                continue
+            
+            installed_version = self.package_manager.get_installed_version(pkg_name)
+            
+            if installed_version is None:
+                print(f"{self.color_manager.YELLOW}{pkg_name}: {self.language_manager.translate('package_not_installed')}{self.color_manager.RESET}")
+                not_installed_count += 1
+            elif target_version and installed_version == target_version:
+                print(f"{self.color_manager.GREEN}{pkg_name}: {self.language_manager.translate('package_installed')}{self.color_manager.RESET}")
+                installed_count += 1
+            elif target_version:
+                print(f"{self.color_manager.RED}{pkg_name}: {self.language_manager.translate('package_version_mismatch', target_version, installed_version)}{self.color_manager.RESET}")
+                mismatch_count += 1
+            else:
+                print(f"{self.color_manager.GREEN}{pkg_name}: {self.language_manager.translate('package_installed')}{self.color_manager.RESET}")
+                installed_count += 1
+        
+        print(f"\n{self.language_manager.translate('check_summary')}")
+        print(f"{self.color_manager.GREEN}{self.language_manager.translate('check_installed_count', installed_count)}{self.color_manager.RESET}")
+        print(f"{self.color_manager.RED}{self.language_manager.translate('check_mismatch_count', mismatch_count)}{self.color_manager.RESET}")
+        print(f"{self.color_manager.YELLOW}{self.language_manager.translate('check_not_installed_count', not_installed_count)}{self.color_manager.RESET}")
+
+    def _extract_package_info_from_filename(self, filename: str) -> Tuple[Optional[str], Optional[str]]:
+        """Extract package name and version from deb filename"""
+        import re
+        import urllib.parse
+        
+        filename = filename.replace('.deb', '')
+        
+        match = re.match(r'^(.+?)_(.+?)_(.+)$', filename)
+        if match:
+            package_name = match.group(1)
+            version = urllib.parse.unquote(match.group(2))
+            architecture = match.group(3)
+            return package_name, version
+        
+        return None, None
+
+    def _print_summary(self, total: int, success: int, failed: int, failed_packages: Dict[str, Tuple[str, str, str, str]]):
+        """Print installation summary"""
+        summary_msg = self.language_manager.translate('summary_line', total, success, failed)
+
+        if hasattr(self.logger, 'silent_filter'):
+            self.logger.silent_filter.add_summary_log(summary_msg)
+
+        self.logger.info(summary_msg)
+
+        if failed > 0:
+            self.logger.info(f"\n{self.language_manager.translate('failed_packages_list')}")
+            for display_name, (pkg_name, target_ver, pkg_url, reason) in failed_packages.items():
+                if "，" in reason and "、" in reason:
+                    self.logger.error(reason)
+                else:
+                    self.logger.error(self.language_manager.translate('package_failure_reason', pkg_name, target_ver, pkg_url, reason))
+            sys.exit(1)
+
+
+def main():
+    """Entry point"""
+    temp_logger = logging.getLogger()
+    temp_logger.setLevel(logging.WARNING)
+    console_handler = logging.StreamHandler(sys.stdout)
+    temp_logger.addHandler(console_handler)
+
+    try:
+        subprocess.run(['wget', '--version'], capture_output=True, check=True)
+    except FileNotFoundError:
+        temp_logger.error(LanguageManager().translate('wget_not_found'))
+        sys.exit(1)
+
+    try:
+        subprocess.run(['dpkg', '--version'], capture_output=True, check=True)
+    except FileNotFoundError:
+        temp_logger.error(LanguageManager().translate('dpkg_command_not_found'))
+        sys.exit(1)
+
+    if os.geteuid() != 0:
+        temp_logger.warning(LanguageManager().translate('root_permission_warning'))
+
+    installer = KyberInstaller()
+    installer.run()
+
+
+if __name__ == "__main__":
+    main()
+EOF

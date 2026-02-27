@@ -1,0 +1,44 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+FROM {{ BENCH_NAME }}:nodejs
+
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+RUN sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN sudo bash -c "echo 'Asia/Shanghai' >/etc/timezone"
+
+RUN sudo bash -c "echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections"
+
+
+COPY fonts/* /usr/share/fonts/
+
+RUN sudo mkfontscale && \
+    sudo mkfontdir && \
+    sudo fc-cache && \
+    sudo fc-list
+
+
+RUN sudo npm install -g @mermaid-js/mermaid-cli mermaid-filter --verbose
+
+RUN sudo chmod o+r /root/.cache
+
+
+COPY plantuml.jar /usr/local/bin/platuml.jar
+RUN echo -e '#!/bin/bash\njava -jar /usr/local/bin/platuml.jar $@' | sudo tee /usr/bin/plantuml
+RUN sudo chmod a+x /usr/bin/plantuml
+
+
+# Convert Command :
+
+# sudo pandoc -F mermaid-filter -F pandoc-plantuml -f markdown-auto_identifiers --listings --wrap=auto --pdf-engine=xelatex --resource-path=.:docs --template=styles/kyber.tex -o docs/example.pdf docs/example.md
+

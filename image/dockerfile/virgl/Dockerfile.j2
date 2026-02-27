@@ -1,0 +1,34 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+FROM {{ BENCH_NAME }}:qemu
+
+
+
+ARG VIRGL_REPO={{ REPO_URL_PROTO }}://git@{{ REPO_URL_BASE }}:{{ REPO_URL_PORT }}/{{ REPO_URL_GROUP }}/emulator/virglrenderer.git
+
+RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --mount=type=secret,id={{ BENCH_AUTH_ID }} \
+	. /etc/benchauthrc {{ BENCH_AUTH_ID }} && \
+	export VIRGL_SOURCE=${HOME}/virglrenderer && \
+	export VIRGL_BUILD=${HOME}/virglrenderer/build && \
+	cd ${HOME} && \
+	git clone ${VIRGL_REPO} -b {{ VIRGL_VERSION }} ${VIRGL_SOURCE} && \
+	cd ${VIRGL_SOURCE} && \
+	meson build -Ddebug=true -Dprefix={{ VIRGL_OUT }} && \
+	meson compile -C ${VIRGL_BUILD} && \
+	sudo meson install -C ${VIRGL_BUILD} && \
+	cd / && \
+	rm -rf ${VIRGL_SOURCE} && \
+	rm -rf ${VIRGL_BUILD}
+
+
+
+# VirglRenderer Test
+
+# Shell 1 $ export PATH={{ VIRGL_OUT }}/bin:${PATH} && export LD_LIBRARY_PATH={{ VIRGL_OUT }}/lib/x86_64-linux-gnu
+# Shell 1 $ virgl_test_server
+
+# Shell 2 $ export LIBGL_ALWAYS_SOFTWARE=1 && export GALLIUM_DRIVER=virpipe
+# Shell 2 $ glxgears
+

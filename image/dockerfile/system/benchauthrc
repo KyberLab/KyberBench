@@ -1,0 +1,7 @@
+BENCH_AUTH_ID=$1
+
+export GIT_USERNAME=`sudo awk -F= '$1=="GIT_USERNAME" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "kyber"`
+export GIT_PASSWORD=`sudo awk -F= '$1=="GIT_PASSWORD" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "kyber"`
+export GIT_URL=`sudo awk -F= '$1=="GIT_URL" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "www.kyber.com"`
+
+echo machine ${GIT_URL} login ${GIT_USERNAME} password ${GIT_PASSWORD} > ~/.netrc

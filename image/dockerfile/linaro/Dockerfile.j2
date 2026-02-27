@@ -1,0 +1,17 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+FROM {{ BENCH_NAME }}:arm
+
+
+
+RUN cd /usr/local/ && \
+	sudo wget {{ LINARO_GCC_URL }} && \
+	sudo tar xvf {{ LINARO_GCC_PACKAGE_NAME }} && \
+	sudo mv {{ LINARO_GCC_DIRECTORY_NAME }} {{ LINARO_GCC_INSTALLED_NAME }} && \
+	sudo rm -rfv {{ LINARO_GCC_PACKAGE_NAME }}
+
+
+RUN echo "export PATH=/usr/local/{{ LINARO_GCC_INSTALLED_NAME }}/bin:\${PATH}" | sudo tee -a {{ BENCH_INITRC }}
+

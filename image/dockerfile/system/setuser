@@ -1,0 +1,57 @@
+#!/bin/bash
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+
+
+
+if [ ${BENCH_RUN_DEBUG} != 0 ];
+then
+	set -uex
+else
+	set -u
+fi
+
+
+setuser()
+{
+	if [ -z "${3}" ];
+	then
+		echo "Usage: ${0} <path> <group> <user>"
+		return
+	fi
+	
+	DEST_GROUP=${2}
+	DEST_USER=${3}
+	
+#	echo "Path : \"${1}\", Group : \"${DEST_GROUP}\", User : \"${DEST_USER}\"."
+	
+	CURRENT_UID=`id -u`
+	DEST_UID=`stat -c "%u" ${1}`
+	
+	if [ ${CURRENT_UID} = ${DEST_UID} ];
+	then
+		return
+	fi
+	
+	DEST_GID=`stat -c "%g" ${1}`
+	
+	if [ -e /home/${DEST_USER} ] || [ ${DEST_UID} == 0 ];
+	then
+		return
+	fi
+	
+	sudo groupadd -g ${DEST_GID} ${DEST_GROUP}
+	sudo useradd -u ${DEST_UID} -g ${DEST_GID} -m -s /bin/bash ${DEST_GROUP}
+	echo "${DEST_USER}:kyber" | sudo chpasswd
+	
+	sudo mkdir -p /home/${DEST_USER}
+	sudo chown ${DEST_USER}:${DEST_GROUP} /home/${DEST_USER}
+	echo "${DEST_USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers 2>&1 > /dev/null
+}
+
+
+setuser ${1} ${2} ${3}
+
+
+

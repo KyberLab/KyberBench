@@ -1,0 +1,7 @@
+# dockpin apt lock file v1
+base-image=bench:system
+
+'http://mirrors.aliyun.com/ubuntu/pool/main/o/openssh/openssh-sftp-server_8.9p1-3ubuntu0.13_amd64.deb' openssh-sftp-server_1%3a8.9p1-3ubuntu0.13_amd64.deb 38714 MD5Sum:c7046d0ecc42087e85f75a8e61f55abf
+'http://mirrors.aliyun.com/ubuntu/pool/main/o/openssh/openssh-server_8.9p1-3ubuntu0.13_amd64.deb' openssh-server_1%3a8.9p1-3ubuntu0.13_amd64.deb 435084 MD5Sum:62f0ff41cb08a1c29e1a85c123af59f9
+'http://mirrors.aliyun.com/ubuntu/pool/main/n/ncurses/ncurses-term_6.3-2ubuntu0.1_all.deb' ncurses-term_6.3-2ubuntu0.1_all.deb 267494 MD5Sum:5081062e040185ceb9d1a542eb89a258
+'http://mirrors.aliyun.com/ubuntu/pool/main/s/ssh-import-id/ssh-import-id_5.11-0ubuntu1_all.deb' ssh-import-id_5.11-0ubuntu1_all.deb 10052 MD5Sum:e39fb9d116f70d6c41dcd3c433cac492

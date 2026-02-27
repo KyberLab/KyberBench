@@ -1,0 +1,9 @@
+#
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+
+BENCH_IMG_DISTRO : ubuntu
+BENCH_IMG_VERSION : 22.04
+
+BENCH_ROOT_PASSWORD : kyber

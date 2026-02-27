@@ -1,0 +1,10 @@
+kmod
+flex
+bison
+autoconf
+binutils-dev
+build-essential
+device-tree-compiler
+ninja-build
+gcc-multilib
+g++-multilib

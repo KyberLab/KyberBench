@@ -1,0 +1,26 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+FROM {{ BENCH_NAME }}:sshd
+
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+RUN sudo ln -sv /usr/bin/python{3,}
+
+
+# Install Python Packages
+RUN sudo -H pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# pip-compile --allow-unsafe --strip-extras --generate-hashes requirements.in -o requirements.txt
+COPY requirements.txt /tmp/
+RUN sudo -H pip install --no-cache-dir --require-hashes --no-warn-script-location -r /tmp/requirements.txt && sudo rm -f /tmp/requirements.txt
+

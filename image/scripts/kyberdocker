@@ -1,0 +1,215 @@
+#! /usr/bin/env python3
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+
+# This script renders a Dockerfile from a Jinja2 template using variables from a YAML file.
+
+
+import argparse
+import os
+import sys
+import yaml
+import jinja2
+
+
+def resolve_input_path(original_path: str, work_dir: str) -> str:
+    """
+    解析输入文件路径（-c/-t）：
+    1. 绝对路径直接检查是否存在
+    2. 相对路径先检查当前目录，不存在则拼接工作目录检查
+    """
+    # 绝对路径处理
+    if os.path.isabs(original_path):
+        if os.path.exists(original_path):
+            return os.path.abspath(original_path)
+        raise FileNotFoundError(f"文件不存在：{original_path}")
+    
+    # 相对路径先检查当前目录
+    current_path = os.path.abspath(original_path)
+    if os.path.exists(current_path):
+        return current_path
+    
+    # 当前目录不存在则拼接工作目录
+    work_path = os.path.abspath(os.path.join(work_dir, original_path))
+    if os.path.exists(work_path):
+        return work_path
+    
+    # 都不存在则抛出异常
+    raise FileNotFoundError(
+        f"文件 '{original_path}' 既不在当前目录，也不在工作目录 '{work_dir}' 中"
+    )
+
+
+def resolve_output_path(output_path: str, work_dir: str, use_work_dir: bool) -> str:
+    """
+    解析输出文件路径（-o）：
+    如果指定了-w参数，输出文件自动放到工作目录下
+    """
+    if use_work_dir:
+        return os.path.abspath(os.path.join(work_dir, output_path))
+    return os.path.abspath(output_path)
+
+
+def load_yaml_config(config_path: str) -> dict:
+    """加载YAML配置文件，返回变量字典（文件不存在返回空字典）"""
+    # 先检查文件是否存在
+    if not os.path.exists(config_path):
+        return {}
+    
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            # safe_load避免安全风险，空文件返回空字典
+            return yaml.safe_load(f) or {}
+    except yaml.YAMLError as e:
+        raise ValueError(f"解析YAML文件失败：{config_path}，错误：{str(e)}")
+    except PermissionError:
+        raise PermissionError(f"没有权限读取文件：{config_path}")
+
+
+def parse_extra_vars(extra_vars_list: list[str]) -> dict:
+    """
+    解析-e参数的变量（name=value格式）：
+    1. 自动转换基础类型（int/float/bool）
+    2. 支持多次重复-e参数
+    """
+    extra_vars = {}
+    for var_str in extra_vars_list:
+        if '=' not in var_str:
+            raise ValueError(f"-e参数格式错误：{var_str}，正确格式为 name=value")
+        
+        # 只分割一次，避免value中包含=
+        name, value = var_str.split('=', 1)
+        
+        # 自动类型转换
+        try:
+            value = int(value)
+        except ValueError:
+            try:
+                value = float(value)
+            except ValueError:
+                # 处理布尔值
+                lower_val = value.lower()
+                if lower_val == 'true':
+                    value = True
+                elif lower_val == 'false':
+                    value = False
+    
+        extra_vars[name] = value
+    return extra_vars
+
+
+def render_template(template_path: str, variables: dict, output_path: str) -> None:
+    """使用Jinja2渲染模板并写入输出文件"""
+    # 读取模板内容
+    try:
+        with open(template_path, 'r', encoding='utf-8') as f:
+            template_content = f.read()
+    except Exception as e:
+        raise RuntimeError(f"读取模板文件失败：{template_path}，错误：{str(e)}")
+    
+    # 渲染模板
+    try:
+        template = jinja2.Template(template_content)
+        rendered_content = template.render(**variables)
+    except jinja2.TemplateError as e:
+        raise RuntimeError(f"渲染模板失败：{template_path}，错误：{str(e)}")
+    
+    # 确保输出目录存在
+    output_dir = os.path.dirname(output_path)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+    
+    # 写入输出文件
+    try:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(rendered_content)
+        print(f"✅ 模板渲染完成！输出文件：{output_path}")
+    except Exception as e:
+        raise RuntimeError(f"写入输出文件失败：{output_path}，错误：{str(e)}")
+
+
+def main():
+    # 1. 解析命令行参数
+    parser = argparse.ArgumentParser(
+        description="Dockerfile模板渲染工具（基于Jinja2+YAML）",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        '-w', dest='work_dir', default=os.getcwd(),
+        help='工作目录（默认：当前命令执行目录）'
+    )
+    parser.add_argument(
+        '-c', dest='config_file', default='KyberDocker.yaml',
+        help='YAML变量配置文件路径（默认：KyberDocker.yaml）'
+    )
+    parser.add_argument(
+        '-t', dest='template_file', default='Dockerfile.j2',
+        help='Jinja2模板文件路径（默认：Dockerfile.j2）'
+    )
+    parser.add_argument(
+        '-o', dest='output_file', default='Dockerfile',
+        help='渲染后的Dockerfile输出路径（默认：Dockerfile）'
+    )
+    parser.add_argument(
+        '-e', action='append', dest='extra_vars', default=[],
+        help='自定义变量（格式：name=value），可多次使用，优先级高于配置文件'
+    )
+    
+    args = parser.parse_args()
+
+    # 2. 验证工作目录合法性
+    if not os.path.isdir(args.work_dir):
+        print(f"❌ 错误：工作目录 '{args.work_dir}' 不存在或不是合法目录", file=sys.stderr)
+        return 1
+    
+    # 判断是否显式指定了-w参数（默认值不算）
+    use_work_dir = '-w' in sys.argv or '--work_dir' in sys.argv
+
+    try:
+        # 3. 解析输入文件路径（-c/-t）
+        config_path = resolve_input_path(args.config_file, args.work_dir)
+        template_path = resolve_input_path(args.template_file, args.work_dir)
+        
+        # 4. 解析输出文件路径（-o）
+        output_path = resolve_output_path(args.output_file, args.work_dir, use_work_dir)
+        
+        # 5. 加载变量（核心修改：调整优先级）
+        # 5.1 加载-c指定的配置文件（最低优先级）
+        config_vars = load_yaml_config(config_path)
+        
+        # 5.2 加载-w目录下的KyberDocker.yaml（优先级高于-c）
+        work_dir_default_config = os.path.join(args.work_dir, 'KyberDocker.yaml')
+        work_dir_vars = load_yaml_config(work_dir_default_config)
+        
+        # 5.3 加载-e参数的变量（最高优先级）
+        extra_vars = parse_extra_vars(args.extra_vars)
+        
+        # 5.4 合并变量：-c < -w目录KyberDocker.yaml < -e
+        final_vars = {**config_vars, **work_dir_vars, **extra_vars}
+        
+        # 打印变量加载信息（可选，方便调试）
+        if work_dir_vars:
+            print(f"ℹ️  已加载-w目录默认配置：{work_dir_default_config}")
+        print(f"ℹ️  已加载-c指定配置：{config_path}")
+        if extra_vars:
+            print(f"ℹ️  已加载-e自定义变量：{extra_vars}")
+        
+        # 6. 渲染模板并输出
+        render_template(template_path, final_vars, output_path)
+        
+        return 0
+
+    except FileNotFoundError as e:
+        print(f"❌ 错误：{e}", file=sys.stderr)
+        return 1
+    except (ValueError, RuntimeError, PermissionError) as e:
+        print(f"❌ 错误：{e}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"❌ 未知错误：{str(e)}", file=sys.stderr)
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,9 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+
+LINARO_GCC_URL : https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+LINARO_GCC_PACKAGE_NAME : gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+LINARO_GCC_DIRECTORY_NAME : gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
+LINARO_GCC_INSTALLED_NAME : gcc-linaro-aarch64-linux-gnu

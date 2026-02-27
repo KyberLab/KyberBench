@@ -1,0 +1,39 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+FROM {{ BENCH_NAME }}:system
+
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+RUN mkdir -p -m 0700 ${HOME}/.ssh && \
+	echo "LogLevel=quiet" >> ${HOME}/.ssh/config
+
+# Configure SSH Server
+RUN sudo sed -i 's/.AllowTcpForwarding.*/AllowTcpForwarding yes/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.X11Forwarding.*/X11Forwarding yes/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.X11UseLocalhost.*/X11UseLocalhost no/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.AddressFamily.*/AddressFamily inet/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.UseDNS.*/UseDNS no/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config && \
+	sudo sed -i 's/.ForwardAgent.*/ForwardAgent yes/g' /etc/ssh/ssh_config && \
+	sudo sed -i 's/.ForwardX11.*/ForwardX11 yes/g' /etc/ssh/ssh_config && \
+	sudo sed -i 's/.ForwardX11Trusted.*/ForwardX11Trusted yes/g' /etc/ssh/ssh_config
+
+
+# Configure SSH Client
+RUN sudo tee -a /etc/ssh/ssh_config <<EOF
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+EOF
+
+
+CMD ["sh", "-c", "sudo mkdir -pv /run/sshd && sudo /usr/sbin/sshd && /usr/bin/bash"]

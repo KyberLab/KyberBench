@@ -1,0 +1,20 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+FROM {{ BENCH_NAME }}:linaro
+
+
+
+RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --mount=type=secret,id={{ BENCH_AUTH_ID }} \
+	. /etc/benchauthrc {{ BENCH_AUTH_ID }} && \
+	cd ${HOME} && \
+	git clone {{ MAKEEXT4FS_URL }} && \
+	rm ~/.netrc && \
+	cd make_ext4fs && \
+	make && \
+	sudo cp make_ext4fs /usr/bin/ && \
+	cd - && \
+	rm -rfv make_ext4fs
+
+

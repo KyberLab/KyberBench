@@ -1,0 +1,53 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#FROM ghcr.io/jille/dockpin AS dockpin
+FROM {{ BENCH_NAME }}:dockpin AS dockpin
+FROM {{ BENCH_IMG_DISTRO }}:{{ BENCH_IMG_VERSION }}
+
+
+COPY --from=dockpin /bin/dockpin /usr/local/sbin/dockpin
+
+
+RUN mv -v /etc/apt/sources.list /etc/apt/sources.list.backup
+COPY aliyun-{{ BENCH_IMG_VERSION }}.list /etc/apt/sources.list
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN yes | unminimize
+
+
+# Add docker repository
+RUN echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+COPY docker.gpg /tmp/docker.gpg
+RUN mkdir -p /etc/apt/keyrings
+
+# https://oneuptime.com/blog/post/2026-02-08-how-to-pin-package-versions-in-dockerfiles-for-reproducible-builds/view
+# apt-cache policy vim wget curl gpg ca-certificates python3-minimal | grep Installed -B1
+RUN apt-get update && \
+    apt-get install -y \
+        sudo=1.9.9-1ubuntu2.5 \
+        vim=2:8.2.3995-1ubuntu2.24 \
+        wget=1.21.2-2ubuntu1.1 \
+        curl=7.81.0-1ubuntu1.22 \
+        gpg=2.2.27-3ubuntu2.5 \
+        ca-certificates=20240203~22.04.1 \
+        python3-minimal=3.10.6-1~22.04.1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN cat /tmp/docker.gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# apt-cache policy docker-ce docker-ce-cli containerd.io docker-compose-plugin | grep Installed -B1
+RUN apt-get update && \
+    apt-get install -y \
+        docker-ce=5:29.2.1-1~ubuntu.22.04~jammy \
+        docker-ce-cli=5:29.2.1-1~ubuntu.22.04~jammy \
+        containerd.io=2.2.1-1~ubuntu.22.04~jammy \
+        docker-compose-plugin=5.0.2-1~ubuntu.22.04~jammy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*

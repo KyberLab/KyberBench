@@ -1,0 +1,8 @@
+dockpin-pkgs
+Dockerfile
+__pycache__
+.DS_Store
+.vscode
+.cspell
+.depend.*
+.bench*

@@ -1,0 +1,91 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+FROM {{ BENCH_NAME }}:develop
+
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+# Install Python Packages
+# pip-compile --allow-unsafe --strip-extras --generate-hashes requirements.in -o requirements.txt
+COPY requirements.txt /tmp/
+RUN sudo -H pip install --no-cache-dir --require-hashes --no-warn-script-location -r /tmp/requirements.txt && sudo rm -f /tmp/requirements.txt
+
+
+
+ARG QEMU_REPO={{ REPO_URL_PROTO }}://git@{{ REPO_URL_BASE }}:{{ REPO_URL_PORT }}/{{ REPO_URL_GROUP }}/emulator/qemu.git
+
+RUN ssh-keyscan -p {{ REPO_URL_PORT }} {{ REPO_URL_BASE }} >> ${HOME}/.ssh/known_hosts
+
+RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --mount=type=secret,id={{ BENCH_AUTH_ID }} \
+	. /etc/benchauthrc {{ BENCH_AUTH_ID }} && \
+	export QEMU_SOURCE=${HOME}/qemu && \
+	export QEMU_BUILD=${HOME}/qemu/build && \
+	cd ${HOME} && \
+	git clone ${QEMU_REPO} -b {{ QEMU_VERSION }} ${QEMU_SOURCE} && \
+	cd ${QEMU_SOURCE} && \
+	git submodule update --init --recursive && \
+	rm ~/.netrc && \
+	mkdir -pv ${QEMU_BUILD} && \
+	cd ${QEMU_BUILD} && \
+	${QEMU_SOURCE}/configure \
+		--enable-debug \
+		--enable-kvm \
+		--enable-fdt \
+		--enable-vnc \
+		--enable-vnc-jpeg \
+		--enable-sdl \
+		--enable-sdl-image \
+		--enable-fuse \
+		--enable-spice \
+		--enable-bzip2 \
+		--enable-gtk \
+		--enable-rdma \
+		--enable-linux-aio \
+		--enable-rbd \
+		--enable-seccomp \
+		--enable-slirp \
+		--enable-xen \
+		--enable-libpmem \
+		--enable-capstone \
+		--enable-cap-ng \
+		--enable-opengl \
+		--enable-virglrenderer \
+		--enable-vfio-user-server \
+		--enable-vhost-kernel \
+		--enable-vhost-user \
+		--enable-vhost-net \
+		--enable-vhost-user-blk-server \
+		--enable-vduse-blk-export \
+		--enable-vhost-vdpa \
+		--enable-virtfs \
+		--enable-vnc \
+		--enable-vnc-jpeg \
+		--enable-libusb \
+		--enable-tools \
+		--enable-qed \
+		--enable-attr \
+		--enable-curses \
+		--enable-virtfs \
+		--enable-guest-agent \
+		--enable-debug-info \
+		--target-list=aarch64-softmmu,arm-softmmu,x86_64-softmmu,i386-softmmu,riscv64-softmmu,riscv32-softmmu \
+		--prefix={{ QEMU_OUT }} && \
+	make -j$(nproc) && \
+	sudo make install && \
+	cd / && \
+	rm -rf ${QEMU_SOURCE} && \
+	rm -rf ${QEMU_BUILD}
+
+
+RUN echo "export PATH={{ QEMU_OUT }}/bin:\${PATH}" | sudo tee -a {{ BENCH_INITRC }}
+

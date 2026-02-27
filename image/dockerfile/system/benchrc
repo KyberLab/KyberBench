@@ -1,0 +1,83 @@
+#!/bin/bash
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+
+
+
+export BENCH_INITCFG=${BENCH_INITCFG:-/etc/benchcfg}
+
+
+if [ `wc -l ${BENCH_INITCFG} | awk '{print $1}'` -le 15 ];
+then
+	printenv | grep BENCH | xargs -i echo export {} | sort | sudo tee -a ${BENCH_INITCFG} 1>&2 > /dev/null
+fi
+
+. ${BENCH_INITCFG}
+
+export BENCH_RUN_DEBUG=${BENCH_RUN_DEBUG:-0}
+export BENCH_IMG_GROUP=${BENCH_IMG_GROUP:-bench}
+export BENCH_IMG_USER=${BENCH_IMG_USER:-bench}
+export BENCH_IMG_GID=${BENCH_IMG_GID:-165535}
+export BENCH_IMG_UID=${BENCH_IMG_UID:-165535}
+export BENCH_RUN_GROUP=${BENCH_RUN_GROUP:-kyber}
+export BENCH_RUN_USER=${BENCH_RUN_USER:-kyber}
+export BENCH_RUN_GID=${BENCH_RUN_GID:-0}
+export BENCH_RUN_UID=${BENCH_RUN_UID:-0}
+export BENCH_INITRC=${BENCH_INITRC:-/etc/benchrc}
+export BENCH_INITCFG=${BENCH_INITCFG:-/etc/benchcfg}
+export BENCH_AUTH_FILE=${BENCH_AUTH_FILE:-.benchauth}
+export BENCH_WORK_PATH=${BENCH_WORK_PATH:-/root}
+export BENCH_SSH_MAP_KEY=${BENCH_SSH_MAP_KEY:-0}
+
+
+
+if [ ${BENCH_RUN_DEBUG} != 0 ];
+then
+	set -uex
+#else
+#	set -u
+fi
+
+
+if [ `id -u` != ${BENCH_RUN_UID} ] && [ `id -u` != 0 ];
+then
+
+	[ -e /var/run/docker.sock ] && sudo chmod 777 /var/run/docker.sock
+
+	#echo "Path : \"${BENCH_WORK_PATH}\", Group : \"${BENCH_RUN_GROUP}\", User : \"${BENCH_RUN_USER}\"."
+
+	BENCH_RUN_DEBUG=${BENCH_RUN_DEBUG} /bin/setuser ${BENCH_WORK_PATH} ${BENCH_RUN_GROUP} ${BENCH_RUN_USER}
+
+
+	if [ ${BENCH_SSH_MAP_KEY} != 0 ] && [ ! -e /home/${BENCH_RUN_USER}/.ssh ];
+	then
+		sudo cp /home/${BENCH_IMG_USER}/.ssh /home/${BENCH_RUN_USER}/.ssh -rf || echo warning : copy ssh key failed !
+		sudo chown -R ${BENCH_RUN_USER}:${BENCH_RUN_GROUP} /home/${BENCH_RUN_GROUP}/.ssh || echo warning : set ssh key permit failed !
+	fi
+
+	#echo ". ${BENCH_INITRC}" >> /home/${BENCH_RUN_USER}/.bashrc
+
+	USER_RUN_CMD=${USER_RUN_CMD:-echo -e "\\\\033[0\;34m Welcome to KyberBench\\\\033[0m" && bash}
+
+	sudo -u \#${BENCH_RUN_UID} /usr/bin/bash -c ". ${BENCH_INITRC} && cd ${BENCH_WORK_PATH} && ${USER_RUN_CMD}"
+
+	exit 0
+
+else
+
+	if [ ! -e ~/.netrc ];
+	then
+		GIT_USERNAME=`sudo awk -F= '$1=="GIT_USERNAME" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
+		GIT_PASSWORD=`sudo awk -F= '$1=="GIT_PASSWORD" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
+		GIT_URL=`sudo awk -F= '$1=="GIT_URL" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
+		echo machine ${GIT_URL} login ${GIT_USERNAME} password ${GIT_PASSWORD} > ~/.netrc
+	fi
+
+	cd ${BENCH_WORK_PATH}
+
+fi
+
+
+set +u
+

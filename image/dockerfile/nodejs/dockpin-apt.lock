@@ -1,0 +1,4 @@
+# dockpin apt lock file v1
+base-image=bench:nodejs-repo
+
+'https://deb.nodesource.com/node_20.x/pool/main/n/nodejs/nodejs_20.20.0-1nodesource1_amd64.deb' nodejs_20.20.0-1nodesource1_amd64.deb 31975968 MD5Sum:46560238643f28394010424cafe2f8b8
