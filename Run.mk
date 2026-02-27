@@ -104,6 +104,11 @@ BENCH_RUN_ARGS				+= -e BENCH_RUNNING_NESTED=1
 BENCH_RUN_ARGS				+= -v /etc/localtime:/etc/localtime:ro
 BENCH_RUN_ARGS				+= -v /var/run/docker.sock:/var/run/docker.sock
 
+# X11 Forward Arguments
+BENCH_RUN_ARGS				+= \
+	-e DISPLAY=$${DISPLAY} \
+    -v /tmp/.X11-unix:/tmp/.X11-unix
+
 # Terminal Arguments
 BENCH_RUN_ARGS				+= $(BENCH_TERM_OPTS)
 
