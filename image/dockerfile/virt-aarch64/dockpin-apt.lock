@@ -1,0 +1,4 @@
+# dockpin apt lock file v1
+base-image=bench:arm
+
+'http://mirrors.aliyun.com/ubuntu/pool/universe/s/scons/scons_4.0.1%2bdfsg-2_all.deb' scons_4.0.1+dfsg-2_all.deb 468624 MD5Sum:fb9dec63c69c2715ce00f4d40f054cb8
