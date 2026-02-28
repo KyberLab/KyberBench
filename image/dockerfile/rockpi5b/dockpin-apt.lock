@@ -1,0 +1,13 @@
+# dockpin apt lock file v1
+base-image=bench:linaro
+
+'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutls-openssl27_3.7.3-4ubuntu1.8_amd64.deb' libgnutls-openssl27_3.7.3-4ubuntu1.8_amd64.deb 22842 MD5Sum:47d6460e3779fe2174ad6729fc728a15
+'http://mirrors.aliyun.com/ubuntu/pool/main/u/unbound/libunbound8_1.13.1-1ubuntu5.14_amd64.deb' libunbound8_1.13.1-1ubuntu5.14_amd64.deb 399968 MD5Sum:5db1ffd045bfc51e7ee8bd5fb9f89467
+'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutls-dane0_3.7.3-4ubuntu1.8_amd64.deb' libgnutls-dane0_3.7.3-4ubuntu1.8_amd64.deb 22598 MD5Sum:7e7d681486830459d8c9721e3fc9dbf4
+'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutlsxx28_3.7.3-4ubuntu1.8_amd64.deb' libgnutlsxx28_3.7.3-4ubuntu1.8_amd64.deb 16338 MD5Sum:87b0aeca27c0a4264c91c45179648439
+'http://mirrors.aliyun.com/ubuntu/pool/main/libi/libidn2/libidn2-dev_2.3.2-2build1_amd64.deb' libidn2-dev_2.3.2-2build1_amd64.deb 86722 MD5Sum:c91b121dadb0d3bc5326eaa0954f6792
+'http://mirrors.aliyun.com/ubuntu/pool/main/p/p11-kit/libp11-kit-dev_0.24.0-6build1_amd64.deb' libp11-kit-dev_0.24.0-6build1_amd64.deb 20160 MD5Sum:7d0cf398e361b3a25323d6934a6b4f32
+'http://mirrors.aliyun.com/ubuntu/pool/main/libt/libtasn1-6/libtasn1-6-dev_4.18.0-4ubuntu0.2_amd64.deb' libtasn1-6-dev_4.18.0-4ubuntu0.2_amd64.deb 91798 MD5Sum:c28bb0a0b33fc01ff94f9c05cbe74d44
+'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutls28-dev_3.7.3-4ubuntu1.8_amd64.deb' libgnutls28-dev_3.7.3-4ubuntu1.8_amd64.deb 1044824 MD5Sum:ba14965f0b8dc1a45ce092fd044bb6a0
+'http://mirrors.aliyun.com/ubuntu/pool/universe/s/scons/scons_4.0.1%2bdfsg-2_all.deb' scons_4.0.1+dfsg-2_all.deb 468624 MD5Sum:fb9dec63c69c2715ce00f4d40f054cb8
+'http://mirrors.aliyun.com/ubuntu/pool/main/libt/libtasn1-6/libtasn1-doc_4.18.0-4ubuntu0.2_all.deb' libtasn1-doc_4.18.0-4ubuntu0.2_all.deb 305346 MD5Sum:42e9be805d342cbb58a74d9720c69495

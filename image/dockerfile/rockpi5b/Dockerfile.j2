@@ -6,6 +6,15 @@ FROM {{ BENCH_NAME }}:linaro
 
 
 
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
 RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --mount=type=secret,id={{ BENCH_AUTH_ID }} \
 	. /etc/benchauthrc {{ BENCH_AUTH_ID }} && \
 	cd ${HOME} && \
