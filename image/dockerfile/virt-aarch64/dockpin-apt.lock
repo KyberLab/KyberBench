@@ -1,5 +1,5 @@
 # dockpin apt lock file v1
-base-image=bench:arm
+base-image=bench:arm10
 
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutls-openssl27_3.7.3-4ubuntu1.8_amd64.deb' libgnutls-openssl27_3.7.3-4ubuntu1.8_amd64.deb 22842 MD5Sum:47d6460e3779fe2174ad6729fc728a15
 'http://mirrors.aliyun.com/ubuntu/pool/main/u/unbound/libunbound8_1.13.1-1ubuntu5.14_amd64.deb' libunbound8_1.13.1-1ubuntu5.14_amd64.deb 399968 MD5Sum:5db1ffd045bfc51e7ee8bd5fb9f89467

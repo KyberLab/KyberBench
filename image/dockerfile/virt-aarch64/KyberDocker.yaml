@@ -1,0 +1,14 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+
+ARM_ELF_GCC_URL : https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-elf.tar.xz
+ARM_ELF_GCC_PACKAGE_NAME : arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-elf.tar.xz
+ARM_ELF_GCC_DIRECTORY_NAME : arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-elf
+ARM_ELF_GCC_INSTALLED_NAME : gcc15-aarch64-none-elf
+
+ARM_LINUX_GCC_URL : https://developer.arm.com/-/media/Files/downloads/gnu/15.2.rel1/binrel/arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
+ARM_LINUX_GCC_PACKAGE_NAME : arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
+ARM_LINUX_GCC_DIRECTORY_NAME : arm-gnu-toolchain-15.2.rel1-x86_64-aarch64-none-linux-gnu
+ARM_LINUX_GCC_INSTALLED_NAME : gcc15-aarch64-none-linux-gnu
