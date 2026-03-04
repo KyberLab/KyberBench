@@ -3,5 +3,5 @@
 #
 #
 
-QEMU_VERSION : v9.2.2/develop
+QEMU_VERSION : kyberlab/v9.2.2/develop
 QEMU_OUT : /usr/local/qemu

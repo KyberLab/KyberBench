@@ -22,7 +22,7 @@ RUN sudo -H pip install --no-cache-dir --require-hashes --no-warn-script-locatio
 
 
 
-ARG QEMU_REPO={{ REPO_URL_PROTO }}://git@{{ REPO_URL_BASE }}:{{ REPO_URL_PORT }}/{{ REPO_URL_GROUP }}/emulator/qemu.git
+ARG QEMU_REPO={{ REPO_URL_PROTO }}://git@{{ REPO_URL_BASE }}:{{ REPO_URL_PORT }}/{{ REPO_URL_GROUP }}/qemu.git
 
 RUN ssh-keyscan -p {{ REPO_URL_PORT }} {{ REPO_URL_BASE }} >> ${HOME}/.ssh/known_hosts
 
