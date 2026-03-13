@@ -33,7 +33,6 @@ RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --m
 	cd ${HOME} && \
 	git clone ${QEMU_REPO} -b {{ QEMU_VERSION }} ${QEMU_SOURCE} && \
 	cd ${QEMU_SOURCE} && \
-	git submodule update --init --recursive && \
 	rm ~/.netrc && \
 	mkdir -pv ${QEMU_BUILD} && \
 	cd ${QEMU_BUILD} && \
