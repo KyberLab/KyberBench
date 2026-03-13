@@ -248,7 +248,7 @@ docker run -d --restart=always \
 endef
 
 ifneq ($(BENCH_INITRC_DISABLE),1)
-BENCH_RUN_SCRIPT			:= "USER_RUN_CMD=$(if $(USER_RUN_CMD),\"$(USER_RUN_CMD)\") . $(BENCH_INITRC)"
+BENCH_RUN_SCRIPT			:= "USER_RUN_CMD=$(if $(USER_RUN_CMD),\"$(call string_escape_double_quotes,$(call string_escape_double_quotes,$(USER_RUN_CMD))))\" . $(BENCH_INITRC)"
 else
 BENCH_RUN_SCRIPT			:= "$(if $(USER_RUN_CMD),$(USER_RUN_CMD),/bin/bash)"
 endif
