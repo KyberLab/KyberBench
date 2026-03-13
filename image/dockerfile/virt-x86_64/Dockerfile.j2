@@ -5,3 +5,23 @@
 FROM {{ BENCH_NAME }}:qemu
 
 
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
+RUN cd ${HOME} && \
+	git clone https://github.com/nutanix/libvfio-user.git && \
+    cd libvfio-user && \
+    meson build --prefix=/usr && \
+    ninja -C build -j$(nproc) && \
+    sudo ninja -C build install && \
+	sudo ldconfig && \
+	cd - && \
+	rm -rfv libvfio-user
+
