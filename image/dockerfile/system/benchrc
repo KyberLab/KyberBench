@@ -68,10 +68,7 @@ else
 
 	if [ ! -e ~/.netrc ];
 	then
-		GIT_USERNAME=`sudo awk -F= '$1=="GIT_USERNAME" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
-		GIT_PASSWORD=`sudo awk -F= '$1=="GIT_PASSWORD" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
-		GIT_URL=`sudo awk -F= '$1=="GIT_URL" {print $2}' /etc/${BENCH_AUTH_FILE} 2>/dev/null || echo ""`
-		echo machine ${GIT_URL} login ${GIT_USERNAME} password ${GIT_PASSWORD} > ~/.netrc
+		. /etc/benchauthrc /etc/${BENCH_AUTH_FILE}
 	fi
 
 	cd ${BENCH_WORK_PATH}

@@ -1,7 +1,41 @@
-BENCH_AUTH_ID=$1
+#!/bin/bash
 
-export GIT_USERNAME=`sudo awk -F= '$1=="GIT_USERNAME" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "kyber"`
-export GIT_PASSWORD=`sudo awk -F= '$1=="GIT_PASSWORD" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "kyber"`
-export GIT_URL=`sudo awk -F= '$1=="GIT_URL" {print $2}' /run/secrets/${BENCH_AUTH_ID} || echo "www.kyber.com"`
+# 1. Handle script arguments: Use the first argument as secrets file path if provided, otherwise use default path
+# $1 is the first script argument; if empty, use /run/secrets/${BENCH_AUTH_ID}
+SECRETS_FILE="${1:-/run/secrets/${BENCH_AUTH_ID}}"
+
+# 2. Define default values (centralized management for easy maintenance)
+DEFAULT_GIT_USERNAME="kyber"
+DEFAULT_GIT_PASSWORD="kyber"
+DEFAULT_GIT_URL="www.kyber.com"
+
+# 3. Encapsulate generic secret reading function (reduce duplicate logic)
+# Arguments:
+#   $1 - Key name to read (e.g. GIT_USERNAME)
+#   $2 - Secrets file path
+# Returns:
+#   Cleaned value of the specified key (trimmed whitespace), empty string on failure
+read_secret_value() {
+    local key="$1"
+    local file="$2"
+    # Read value for specified key, trim leading/trailing whitespace, suppress error output
+    sudo awk -F= -v key="${key}" '$1 == key {gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}' "${file}" 2>/dev/null
+}
+
+# 4. Read and set environment variables (use default values if empty/failed to read)
+export GIT_USERNAME=$(read_secret_value "GIT_USERNAME" "${SECRETS_FILE}")
+GIT_USERNAME=${GIT_USERNAME:-$DEFAULT_GIT_USERNAME}
+
+export GIT_PASSWORD=$(read_secret_value "GIT_PASSWORD" "${SECRETS_FILE}")
+GIT_PASSWORD=${GIT_PASSWORD:-$DEFAULT_GIT_PASSWORD}
+
+export GIT_URL=$(read_secret_value "GIT_URL" "${SECRETS_FILE}")
+GIT_URL=${GIT_URL:-$DEFAULT_GIT_URL}
+
+# Optional: Print variables for testing/verification purposes
+#echo "Final GIT_USERNAME: ${GIT_USERNAME}"
+#echo "Final GIT_PASSWORD: ${GIT_PASSWORD}"
+#echo "Final GIT_URL: ${GIT_URL}"
 
 echo machine ${GIT_URL} login ${GIT_USERNAME} password ${GIT_PASSWORD} > ~/.netrc
+chmod 600 ~/.netrc
