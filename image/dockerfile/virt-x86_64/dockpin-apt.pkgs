@@ -1,8 +1,0 @@
-git
-meson
-build-essential
-libnuma-dev
-libjson-c-dev
-libcmocka-dev
-pkg-config
-libssl-dev

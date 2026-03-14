@@ -1,4 +1,3 @@
 # dockpin apt lock file v1
 base-image=bench:qemu
 
-'http://mirrors.aliyun.com/ubuntu/pool/main/g/git/git_2.34.1-1ubuntu1.17_amd64.deb' git_1%3a2.34.1-1ubuntu1.17_amd64.deb 3173622 MD5Sum:f541a42e0f241bb4b06fefe294c402b4

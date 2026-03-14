@@ -41,7 +41,7 @@ base-image=bench:nodejs
 'http://mirrors.aliyun.com/ubuntu/pool/main/b/binfmt-support/binfmt-support_2.2.1-2_amd64.deb' binfmt-support_2.2.1-2_amd64.deb 55820 MD5Sum:4fc7a3fee6a6d4bd8f62320c04de9391
 'http://mirrors.aliyun.com/ubuntu/pool/main/j/java-common/java-common_0.72build2_all.deb' java-common_0.72build2_all.deb 6782 MD5Sum:bc37054db74f8ba5a0566c2e2ed25416
 'http://mirrors.aliyun.com/ubuntu/pool/main/n/nspr/libnspr4_4.35-0ubuntu0.22.04.1_amd64.deb' libnspr4_2%3a4.35-0ubuntu0.22.04.1_amd64.deb 119208 MD5Sum:9f570e7da6ee36373d50f36b6b10ddae
-'http://mirrors.aliyun.com/ubuntu/pool/main/n/nss/libnss3_3.98-0ubuntu0.22.04.2_amd64.deb' libnss3_2%3a3.98-0ubuntu0.22.04.2_amd64.deb 1346964 MD5Sum:06c7f02901ce5dd3a7f2b1ebf47104a4
+'http://mirrors.aliyun.com/ubuntu/pool/main/n/nss/libnss3_3.98-0ubuntu0.22.04.3_amd64.deb' libnss3_2%3a3.98-0ubuntu0.22.04.3_amd64.deb 1347212 MD5Sum:a2ac12f93a9698d2edace2ddfec382df
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pcsc-lite/libpcsclite1_1.9.5-3ubuntu1_amd64.deb' libpcsclite1_1.9.5-3ubuntu1_amd64.deb 19796 MD5Sum:347f0432d5d57cd67db767435f7fdb9a
 'http://mirrors.aliyun.com/ubuntu/pool/main/o/openjdk-lts/openjdk-11-jre-headless_11.0.30%2b7-1ubuntu1%7e22.04_amd64.deb' openjdk-11-jre-headless_11.0.30+7-1ubuntu1~22.04_amd64.deb 42594774 MD5Sum:545e82dc5fb012b4524bf800e000e72c
 'http://mirrors.aliyun.com/ubuntu/pool/main/j/java-common/default-jre-headless_1.11-72build2_amd64.deb' default-jre-headless_2%3a1.11-72build2_amd64.deb 3042 MD5Sum:8dc936fe2a0835e1c4554b6d16b7bfca
