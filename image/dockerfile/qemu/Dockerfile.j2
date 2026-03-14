@@ -21,10 +21,29 @@ COPY requirements.txt /tmp/
 RUN sudo -H pip install --no-cache-dir --require-hashes --no-warn-script-location -r /tmp/requirements.txt && sudo rm -f /tmp/requirements.txt
 
 
+RUN ssh-keyscan -p {{ REPO_URL_PORT }} {{ REPO_URL_BASE }} >> ${HOME}/.ssh/known_hosts
+
+
+RUN cd ${HOME} && \
+	git clone https://git.kernel.org/pub/scm/utils/dtc/dtc.git && \
+	cd dtc && \
+	sudo make PREFIX=/usr libfdt install && \
+	cd - && \
+	rm -rfv dtc
+
+
+RUN cd ${HOME} && \
+	git clone https://github.com/nutanix/libvfio-user.git && \
+	cd libvfio-user && \
+	meson setup build && \
+	ninja -C build && \
+	sudo ninja -C build install && \
+	sudo ldconfig && \
+	cd - && \
+	rm -rfv libvfio-user
+
 
 ARG QEMU_REPO={{ REPO_URL_PROTO }}://git@{{ REPO_URL_BASE }}:{{ REPO_URL_PORT }}/{{ REPO_URL_GROUP }}/qemu.git
-
-RUN ssh-keyscan -p {{ REPO_URL_PORT }} {{ REPO_URL_BASE }} >> ${HOME}/.ssh/known_hosts
 
 RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --mount=type=secret,id={{ BENCH_AUTH_ID }} \
 	. /etc/benchauthrc {{ BENCH_AUTH_ID }} && \
@@ -59,7 +78,6 @@ RUN --mount=type=ssh,gid={{ BENCH_SSH_MAP_GID }},uid={{ BENCH_SSH_MAP_UID }} --m
 		--enable-cap-ng \
 		--enable-opengl \
 		--enable-virglrenderer \
-		--enable-vfio-user-server \
 		--enable-vhost-kernel \
 		--enable-vhost-user \
 		--enable-vhost-net \

@@ -28,7 +28,6 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/libt/libtext-iconv-perl/libtext-iconv-perl_1.7-7build3_amd64.deb' libtext-iconv-perl_1.7-7build3_amd64.deb 14278 MD5Sum:8fa82fd36c48765643e60ca2d63bfb04
 'http://mirrors.aliyun.com/ubuntu/pool/main/n/netcat-openbsd/netcat-openbsd_1.218-4ubuntu1_amd64.deb' netcat-openbsd_1.218-4ubuntu1_amd64.deb 39388 MD5Sum:c53815f2151718cbc7d1a22943f6a324
 'http://mirrors.aliyun.com/ubuntu/pool/main/d/dosfstools/dosfstools_4.2-1build3_amd64.deb' dosfstools_4.2-1build3_amd64.deb 88032 MD5Sum:236d0c23a8607ec43c1d00929848e353
-'http://mirrors.aliyun.com/ubuntu/pool/main/n/numactl/libnuma1_2.0.14-3ubuntu2_amd64.deb' libnuma1_2.0.14-3ubuntu2_amd64.deb 22478 MD5Sum:56d46ada80dcecc73a345b3bc47f2578
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pci.ids/pci.ids_0.0%7e2022.01.22-1ubuntu0.1_all.deb' pci.ids_0.0~2022.01.22-1ubuntu0.1_all.deb 250790 MD5Sum:2c14b10330974eb206cc3446b9c65639
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pciutils/libpci3_3.7.0-6_amd64.deb' libpci3_1%3a3.7.0-6_amd64.deb 28896 MD5Sum:43ea23620aec4f9ed69d561545d526a6
 'http://mirrors.aliyun.com/ubuntu/pool/main/libu/libusb-1.0/libusb-1.0-0_1.0.25-1ubuntu2_amd64.deb' libusb-1.0-0_2%3a1.0.25-1ubuntu2_amd64.deb 52688 MD5Sum:be8273fad517153236cb9b3b74e0c06f
@@ -371,9 +370,7 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/libn/libnl3/libnl-3-dev_3.5.0-0.1_amd64.deb' libnl-3-dev_3.5.0-0.1_amd64.deb 101322 MD5Sum:f4852a634574219d26c3b8ea6f6b1cb1
 'http://mirrors.aliyun.com/ubuntu/pool/main/libn/libnl3/libnl-route-3-dev_3.5.0-0.1_amd64.deb' libnl-route-3-dev_3.5.0-0.1_amd64.deb 202098 MD5Sum:ceb8ff2ac000ad48fb9f2d0c5bf3317b
 'http://mirrors.aliyun.com/ubuntu/pool/main/r/rdma-core/libibverbs-dev_39.0-1_amd64.deb' libibverbs-dev_39.0-1_amd64.deb 628238 MD5Sum:96f5bfd26c9c0d7a2ffcccfb07c6983a
-'http://mirrors.aliyun.com/ubuntu/pool/main/n/numactl/libnuma-dev_2.0.14-3ubuntu2_amd64.deb' libnuma-dev_2.0.14-3ubuntu2_amd64.deb 35872 MD5Sum:6ad5d42433dd543b20de4dacd65eef8f
 'http://mirrors.aliyun.com/ubuntu/pool/universe/h/hwloc/libhwloc-dev_2.7.0-2ubuntu1_amd64.deb' libhwloc-dev_2.7.0-2ubuntu1_amd64.deb 255576 MD5Sum:5ce8e949ee632d2a4c4a848eafd2ff1d
-'http://mirrors.aliyun.com/ubuntu/pool/main/libe/libevent/libevent-2.1-7_2.1.12-stable-1build3_amd64.deb' libevent-2.1-7_2.1.12-stable-1build3_amd64.deb 148238 MD5Sum:43794f24f88b06360ad4519f940e469e
 'http://mirrors.aliyun.com/ubuntu/pool/main/libe/libevent/libevent-extra-2.1-7_2.1.12-stable-1build3_amd64.deb' libevent-extra-2.1-7_2.1.12-stable-1build3_amd64.deb 65372 MD5Sum:8784ecaa276180538ea71cd7ccbece30
 'http://mirrors.aliyun.com/ubuntu/pool/main/libe/libevent/libevent-openssl-2.1-7_2.1.12-stable-1build3_amd64.deb' libevent-openssl-2.1-7_2.1.12-stable-1build3_amd64.deb 15794 MD5Sum:d91d22d6e023cb5faff9840009516f7e
 'http://mirrors.aliyun.com/ubuntu/pool/main/libe/libevent/libevent-dev_2.1.12-stable-1build3_amd64.deb' libevent-dev_2.1.12-stable-1build3_amd64.deb 278174 MD5Sum:5e6e4606244dc5df9fe51ba257e5d56a
@@ -492,8 +489,6 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/glusterfs/libgfapi0_10.1-1ubuntu0.2_amd64.deb' libgfapi0_10.1-1ubuntu0.2_amd64.deb 77332 MD5Sum:62297d565fc87c119a3973df959eaf53
 'http://mirrors.aliyun.com/ubuntu/pool/main/libg/libglu/libglu1-mesa_9.0.2-1_amd64.deb' libglu1-mesa_9.0.2-1_amd64.deb 144982 MD5Sum:a2124a00e69c84f270f236cf4a189c78
 'http://mirrors.aliyun.com/ubuntu/pool/main/libg/libglu/libglu1-mesa-dev_9.0.2-1_amd64.deb' libglu1-mesa-dev_9.0.2-1_amd64.deb 231036 MD5Sum:d2991a05af831fa4cd55a2f4911ea0ba
-'http://mirrors.aliyun.com/ubuntu/pool/main/g/gmp/libgmpxx4ldbl_6.2.1%2bdfsg-3ubuntu1_amd64.deb' libgmpxx4ldbl_2%3a6.2.1+dfsg-3ubuntu1_amd64.deb 9580 MD5Sum:3165ed3513788df0ecfb5001d727e128
-'http://mirrors.aliyun.com/ubuntu/pool/main/g/gmp/libgmp-dev_6.2.1%2bdfsg-3ubuntu1_amd64.deb' libgmp-dev_2%3a6.2.1+dfsg-3ubuntu1_amd64.deb 336684 MD5Sum:842030cc4c885c77f950f5f5b4f67e87
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/graphite2/libgraphite2-dev_1.3.14-1build2_amd64.deb' libgraphite2-dev_1.3.14-1build2_amd64.deb 14680 MD5Sum:9f16df370478728ff8d177a8c09dc182
 'http://mirrors.aliyun.com/ubuntu/pool/main/h/harfbuzz/libharfbuzz-icu0_2.7.4-1ubuntu3.2_amd64.deb' libharfbuzz-icu0_2.7.4-1ubuntu3.2_amd64.deb 5890 MD5Sum:a3a7a4537e7093b68b89493798d1d8ba
 'http://mirrors.aliyun.com/ubuntu/pool/main/h/harfbuzz/libharfbuzz-gobject0_2.7.4-1ubuntu3.2_amd64.deb' libharfbuzz-gobject0_2.7.4-1ubuntu3.2_amd64.deb 25972 MD5Sum:0033a5575c742adcb9a7f28d34ba628f
@@ -538,8 +533,6 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/libp/libpng1.6/libpng-tools_1.6.37-3ubuntu0.4_amd64.deb' libpng-tools_1.6.37-3ubuntu0.4_amd64.deb 28674 MD5Sum:69fa50832383ce26c06bb0a933dd9fb8
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pulseaudio/libpulse-mainloop-glib0_15.99.1%2bdfsg1-1ubuntu2.2_amd64.deb' libpulse-mainloop-glib0_1%3a15.99.1+dfsg1-1ubuntu2.2_amd64.deb 12378 MD5Sum:d2e595dd5e270bb8153fa11db570dc88
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pulseaudio/libpulse-dev_15.99.1%2bdfsg1-1ubuntu2.2_amd64.deb' libpulse-dev_1%3a15.99.1+dfsg1-1ubuntu2.2_amd64.deb 75616 MD5Sum:2086289c6ab5561923b11c090d16a56f
-'http://mirrors.aliyun.com/ubuntu/pool/universe/p/python2.7/libpython2.7-minimal_2.7.18-13ubuntu1.5_amd64.deb' libpython2.7-minimal_2.7.18-13ubuntu1.5_amd64.deb 347366 MD5Sum:d5670f01de7dd73bf5565567197932fd
-'http://mirrors.aliyun.com/ubuntu/pool/universe/p/python2.7/libpython2.7-stdlib_2.7.18-13ubuntu1.5_amd64.deb' libpython2.7-stdlib_2.7.18-13ubuntu1.5_amd64.deb 1977332 MD5Sum:c9eb26421351b892b67a289ebcae37ca
 'http://mirrors.aliyun.com/ubuntu/pool/universe/p/python2.7/libpython2.7_2.7.18-13ubuntu1.5_amd64.deb' libpython2.7_2.7.18-13ubuntu1.5_amd64.deb 1163522 MD5Sum:568de9c5cf057aac74ef764a3b56dcda
 'http://mirrors.aliyun.com/ubuntu/pool/universe/p/python2.7/libpython2.7-dev_2.7.18-13ubuntu1.5_amd64.deb' libpython2.7-dev_2.7.18-13ubuntu1.5_amd64.deb 2514454 MD5Sum:6df7ea2b826baa7662dbd54493651c85
 'http://mirrors.aliyun.com/ubuntu/pool/universe/p/python-defaults/libpython2-dev_2.7.18-3_amd64.deb' libpython2-dev_2.7.18-3_amd64.deb 7512 MD5Sum:71404d97103e050f015b28b1f41e2ca3
@@ -572,7 +565,6 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/libs/libslirp/libslirp-dev_4.6.1-1ubuntu0.1_amd64.deb' libslirp-dev_4.6.1-1ubuntu0.1_amd64.deb 76064 MD5Sum:640d1af897244e5dfacd8af408e85776
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/spice-protocol/libspice-protocol-dev_0.14.3-1_all.deb' libspice-protocol-dev_0.14.3-1_all.deb 21640 MD5Sum:50e66fa0667b13e403c81c0853d64b2f
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/spice/libspice-server-dev_0.15.0-2ubuntu4_amd64.deb' libspice-server-dev_0.15.0-2ubuntu4_amd64.deb 10546 MD5Sum:ce9622fe52e1a4a33656abebd04b372c
-'http://mirrors.aliyun.com/ubuntu/pool/main/o/openssl/libssl-dev_3.0.2-0ubuntu1.21_amd64.deb' libssl-dev_3.0.2-0ubuntu1.21_amd64.deb 2374862 MD5Sum:e1b05ee3a318a2161528388da33a4677
 'http://mirrors.aliyun.com/ubuntu/pool/main/libu/libubootenv/libubootenv0.1_0.3.2-1build1_amd64.deb' libubootenv0.1_0.3.2-1build1_amd64.deb 11980 MD5Sum:6d950ad8e047264900e3578026c0f81f
 'http://mirrors.aliyun.com/ubuntu/pool/main/libu/libubootenv/libubootenv-tool_0.3.2-1build1_amd64.deb' libubootenv-tool_0.3.2-1build1_amd64.deb 7304 MD5Sum:30b873a9cecb6b6ab85e8c8ef101ec63
 'http://mirrors.aliyun.com/ubuntu/pool/main/libu/liburing/liburing-dev_2.1-2build1_amd64.deb' liburing-dev_2.1-2build1_amd64.deb 51832 MD5Sum:4d77117e23719ab9c64d3fd97eae7b4b
@@ -600,10 +592,8 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/universe/x/xen/libxen-dev_4.16.0-1%7eubuntu2.1_amd64.deb' libxen-dev_4.16.0-1~ubuntu2.1_amd64.deb 848496 MD5Sum:b87105de2114bbd97e67a6d8a6371cb8
 'http://mirrors.aliyun.com/ubuntu/pool/main/y/yelp/libyelp0_42.1-1ubuntu0.1_amd64.deb' libyelp0_42.1-1ubuntu0.1_amd64.deb 103630 MD5Sum:d14a2ec1036302cd7710f1a0a11f9b79
 'http://mirrors.aliyun.com/ubuntu/pool/universe/m/mesa-demos/mesa-utils-bin_8.4.0-1ubuntu1_amd64.deb' mesa-utils-bin_8.4.0-1ubuntu1_amd64.deb 53834 MD5Sum:89fff92f9b8ec61e361810050ce30e64
-'http://mirrors.aliyun.com/ubuntu/pool/universe/m/meson/meson_0.61.2-1_all.deb' meson_0.61.2-1_all.deb 518618 MD5Sum:ca899f3b1ac841d7be10263a7bac8268
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnome-terminal/nautilus-extension-gnome-terminal_3.44.0-1ubuntu1_amd64.deb' nautilus-extension-gnome-terminal_3.44.0-1ubuntu1_amd64.deb 22422 MD5Sum:bcc2179fe3aebf12c7c4cc709d67c57c
 'http://mirrors.aliyun.com/ubuntu/pool/universe/n/netcat-openbsd/netcat_1.218-4ubuntu1_all.deb' netcat_1.218-4ubuntu1_all.deb 2044 MD5Sum:c6a9148f444e97bfe892d5d29ee4d059
-'http://mirrors.aliyun.com/ubuntu/pool/main/n/nettle/nettle-dev_3.7.3-1build2_amd64.deb' nettle-dev_3.7.3-1build2_amd64.deb 1135160 MD5Sum:4bec23f1b59f0706b42c6194a954e3ff
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pipewire/pipewire-bin_0.3.48-1ubuntu3_amd64.deb' pipewire-bin_0.3.48-1ubuntu3_amd64.deb 311682 MD5Sum:6ab5dd54aa425074ec380c261f30dd12
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pipewire/pipewire_0.3.48-1ubuntu3_amd64.deb' pipewire_0.3.48-1ubuntu3_amd64.deb 3964 MD5Sum:f42df3c98c79b4962650777130e8059d
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pipewire-media-session/pipewire-media-session_0.4.1-2ubuntu1_amd64.deb' pipewire-media-session_0.4.1-2ubuntu1_amd64.deb 127514 MD5Sum:af8f36ccbbe659c5f41bc802ce57943a
@@ -633,15 +623,11 @@ base-image=bench:develop
 'http://mirrors.aliyun.com/ubuntu/pool/main/y/yelp-xsl/yelp-xsl_42.0-1ubuntu0.1_all.deb' yelp-xsl_42.0-1ubuntu0.1_all.deb 201186 MD5Sum:4413ed911f2a06d27c49c8ac0228bb98
 'http://mirrors.aliyun.com/ubuntu/pool/main/y/yelp/yelp_42.1-1ubuntu0.1_amd64.deb' yelp_42.1-1ubuntu0.1_amd64.deb 553978 MD5Sum:dfc9827af65e84ec99ae5e379692d426
 'http://mirrors.aliyun.com/ubuntu/pool/main/c/cloud-utils/cloud-image-utils_0.32-22-g45fe84a5-0ubuntu1_all.deb' cloud-image-utils_0.32-22-g45fe84a5-0ubuntu1_all.deb 19254 MD5Sum:274c4416f2c1e24096eb510d7862d11b
-'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cmocka/cmocka-doc_1.1.5-2_all.deb' cmocka-doc_1.1.5-2_all.deb 84152 MD5Sum:fb12ac916cbc59ccf97fd56fb8ccad29
-'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cmocka/libcmocka0_1.1.5-2_amd64.deb' libcmocka0_1.1.5-2_amd64.deb 21056 MD5Sum:40f5869981e417d06abd0b78d241bdf8
-'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cmocka/libcmocka-dev_1.1.5-2_amd64.deb' libcmocka-dev_1.1.5-2_amd64.deb 15924 MD5Sum:a0dad03ccbb03f5b9abb26eec00dfe91
 'http://mirrors.aliyun.com/ubuntu/pool/universe/libg/libguestfs/libguestfs-hfsplus_1.46.2-10ubuntu3_amd64.deb' libguestfs-hfsplus_1%3a1.46.2-10ubuntu3_amd64.deb 1578 MD5Sum:5ad4969dd94b576f588e1883d53be7a7
 'http://mirrors.aliyun.com/ubuntu/pool/universe/libg/libguestfs/libguestfs-reiserfs_1.46.2-10ubuntu3_amd64.deb' libguestfs-reiserfs_1%3a1.46.2-10ubuntu3_amd64.deb 1584 MD5Sum:9ee0f451ee01b3a75b6e982a5fb9c295
 'http://mirrors.aliyun.com/ubuntu/pool/universe/libg/libguestfs/libguestfs-xfs_1.46.2-10ubuntu3_amd64.deb' libguestfs-xfs_1%3a1.46.2-10ubuntu3_amd64.deb 1580 MD5Sum:50a4a7a57dbcdee30e5ec63ccfbd643c
 'http://mirrors.aliyun.com/ubuntu/pool/main/r/rdma-core/libibumad3_39.0-1_amd64.deb' libibumad3_39.0-1_amd64.deb 28420 MD5Sum:cbc3c1bda250def4d6d81d0bf63cb3ae
 'http://mirrors.aliyun.com/ubuntu/pool/main/r/rdma-core/libibumad-dev_39.0-1_amd64.deb' libibumad-dev_39.0-1_amd64.deb 56410 MD5Sum:9852191d7bc0fb4a15d398e34b514037
-'http://mirrors.aliyun.com/ubuntu/pool/main/j/json-c/libjson-c-dev_0.15-3%7eubuntu1.22.04.2_amd64.deb' libjson-c-dev_0.15-3~ubuntu1.22.04.2_amd64.deb 60466 MD5Sum:aa71390ac1a74a79f375c61cfacf0f02
 'http://mirrors.aliyun.com/ubuntu/pool/main/r/rdma-core/librdmacm-dev_39.0-1_amd64.deb' librdmacm-dev_39.0-1_amd64.deb 129034 MD5Sum:bac130f06cee99f3082eb058254fb868
 'http://mirrors.aliyun.com/ubuntu/pool/main/v/virglrenderer/libvirglrenderer-dev_0.9.1-1%7eexp1ubuntu2_amd64.deb' libvirglrenderer-dev_0.9.1-1~exp1ubuntu2_amd64.deb 6390 MD5Sum:e29e3ff85d104db9e2eb99b64983a6a3
 'http://mirrors.aliyun.com/ubuntu/pool/universe/m/mesa-demos/mesa-utils_8.4.0-1ubuntu1_amd64.deb' mesa-utils_8.4.0-1ubuntu1_amd64.deb 1064536 MD5Sum:c3c5c67df470198ebf06fc37edfcc9f3
