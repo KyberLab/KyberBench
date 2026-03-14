@@ -106,9 +106,9 @@ BENCH_RUN_ARGS				+= -v /var/run/docker.sock:/var/run/docker.sock
 
 # Proxy Arguments
 BENCH_RUN_ARGS				+= \
-	-e "http_proxy=$(http_proxy)" \
-	-e "https_proxy=$(https_proxy)" \
-	-e "no_proxy=localhost,127.0.0.1"
+	-e BENCH_ENV_EXPORT_http_proxy="$(http_proxy)" \
+	-e BENCH_ENV_EXPORT_https_proxy="$(https_proxy)" \
+	-e BENCH_ENV_EXPORT_no_proxy="localhost,127.0.0.1"
 
 # X11 Forward Arguments
 BENCH_RUN_ARGS				+= \

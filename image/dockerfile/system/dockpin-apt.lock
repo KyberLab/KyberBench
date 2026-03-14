@@ -25,10 +25,11 @@ base-image=bench:ubuntu
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-apt/python3-apt_2.4.0ubuntu4.1_amd64.deb' python3-apt_2.4.0ubuntu4.1_amd64.deb 163898 MD5Sum:f66afb391c0e8a2ba1f983ff36cc45fd
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/setuptools/python3-pkg-resources_59.6.0-1.2ubuntu0.22.04.3_all.deb' python3-pkg-resources_59.6.0-1.2ubuntu0.22.04.3_all.deb 132734 MD5Sum:1ae583a2ad5bdc8f5b39d4fb97cf7ed1
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pyyaml/python3-yaml_5.4.1-1ubuntu1_amd64.deb' python3-yaml_5.4.1-1ubuntu1_amd64.deb 129332 MD5Sum:8324b748b93e672d677a9197a09b6870
+'http://mirrors.aliyun.com/ubuntu/pool/main/s/sudo/sudo_1.9.9-1ubuntu2.6_amd64.deb' sudo_1.9.9-1ubuntu2.6_amd64.deb 820202 MD5Sum:222f96027de8e16323e1d488e360f50b
 'http://mirrors.aliyun.com/ubuntu/pool/main/t/tzdata/tzdata_2025b-0ubuntu0.22.04.1_all.deb' tzdata_2025b-0ubuntu0.22.04.1_all.deb 347006 MD5Sum:050cd2ae698fb418cab1e4747122b857
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/systemd/udev_249.11-0ubuntu3.17_amd64.deb' udev_249.11-0ubuntu3.17_amd64.deb 1557110 MD5Sum:3020fba3670bc3fbe852f11f856e4d47
 'http://mirrors.aliyun.com/ubuntu/pool/main/x/xkeyboard-config/xkb-data_2.33-1_all.deb' xkb-data_2.33-1_all.deb 394460 MD5Sum:f7c72964218527532bd68ed3f688f7d4
-'http://mirrors.aliyun.com/ubuntu/pool/main/u/util-linux/bsdextrautils_2.37.2-4ubuntu3.4_amd64.deb' bsdextrautils_2.37.2-4ubuntu3.4_amd64.deb 71418 MD5Sum:64bb9de846c3a1b5607e01f5326d9a78
+'http://mirrors.aliyun.com/ubuntu/pool/main/u/util-linux/bsdextrautils_2.37.2-4ubuntu3.5_amd64.deb' bsdextrautils_2.37.2-4ubuntu3.5_amd64.deb 71408 MD5Sum:80bd13b157e0c65aa6c675be5a9970cf
 'http://mirrors.aliyun.com/ubuntu/pool/main/c/cpio/cpio_2.13%2bdfsg-7ubuntu0.1_amd64.deb' cpio_2.13+dfsg-7ubuntu0.1_amd64.deb 84528 MD5Sum:ac8d1878cf34f5b76906bb1314ab6627
 'http://mirrors.aliyun.com/ubuntu/pool/main/d/dmidecode/dmidecode_3.3-3ubuntu0.2_amd64.deb' dmidecode_3.3-3ubuntu0.2_amd64.deb 68534 MD5Sum:65e078cf097d7b4510c0d90d96107146
 'http://mirrors.aliyun.com/ubuntu/pool/main/f/file/libmagic-mgc_5.41-3ubuntu0.1_amd64.deb' libmagic-mgc_1%3a5.41-3ubuntu0.1_amd64.deb 257310 MD5Sum:913e48adb02be470505b2ce325a0614b
@@ -67,7 +68,7 @@ base-image=bench:ubuntu
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-importlib-metadata/python3-importlib-metadata_4.6.4-1_all.deb' python3-importlib-metadata_4.6.4-1_all.deb 16230 MD5Sum:0ac01ca22e6777c6bcdd4257ca86ec18
 'http://mirrors.aliyun.com/ubuntu/pool/main/j/jeepney/python3-jeepney_0.7.1-3_all.deb' python3-jeepney_0.7.1-3_all.deb 36774 MD5Sum:7f8108e39a0cf69bf1e36dc98bd9d385
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-cffi/python3-cffi-backend_1.15.0-1build2_amd64.deb' python3-cffi-backend_1.15.0-1build2_amd64.deb 77390 MD5Sum:2ab6d023f24f07e77d07c464b63e25e1
-'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-cryptography/python3-cryptography_3.4.8-1ubuntu2.2_amd64.deb' python3-cryptography_3.4.8-1ubuntu2.2_amd64.deb 236144 MD5Sum:f8a6fb9238ec99be00dc49377f586b81
+'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-cryptography/python3-cryptography_3.4.8-1ubuntu2.3_amd64.deb' python3-cryptography_3.4.8-1ubuntu2.3_amd64.deb 237002 MD5Sum:bcc4911af1c120d6c4f68821c667553b
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-secretstorage/python3-secretstorage_3.3.1-1_all.deb' python3-secretstorage_3.3.1-1_all.deb 13200 MD5Sum:ae9360995e6bc351cf7c5f676401879f
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-keyring/python3-keyring_23.5.0-1_all.deb' python3-keyring_23.5.0-1_all.deb 35706 MD5Sum:da3a06ae4f6572760a81dbb6b86c0580
 'http://mirrors.aliyun.com/ubuntu/pool/main/l/lazr.uri/python3-lazr.uri_1.0.6-2_all.deb' python3-lazr.uri_1.0.6-2_all.deb 14392 MD5Sum:96a7ec0f25433351f2c39f99c5fa34fc
@@ -141,6 +142,7 @@ base-image=bench:ubuntu
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gcc-11/libgcc-11-dev_11.4.0-1ubuntu1%7e22.04.3_amd64.deb' libgcc-11-dev_11.4.0-1ubuntu1~22.04.3_amd64.deb 2517422 MD5Sum:ff688865be08a86edc1b86686574380d
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gcc-11/gcc-11_11.4.0-1ubuntu1%7e22.04.3_amd64.deb' gcc-11_11.4.0-1ubuntu1~22.04.3_amd64.deb 20143406 MD5Sum:6e78a35cc6982fee8e92fe85cd3bafd2
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gcc-defaults/gcc_11.2.0-1ubuntu1_amd64.deb' gcc_4%3a11.2.0-1ubuntu1_amd64.deb 5112 MD5Sum:5cc3273b99ad19d1e7029c7411873c6f
+'http://mirrors.aliyun.com/ubuntu/pool/main/g/git/git_2.34.1-1ubuntu1.17_amd64.deb' git_1%3a2.34.1-1ubuntu1.17_amd64.deb 3173622 MD5Sum:f541a42e0f241bb4b06fefe294c402b4
 'http://mirrors.aliyun.com/ubuntu/pool/main/a/atk1.0/libatk1.0-data_2.36.0-3build1_all.deb' libatk1.0-data_2.36.0-3build1_all.deb 2824 MD5Sum:62683a2a1c812c3ffa710944d3b18e36
 'http://mirrors.aliyun.com/ubuntu/pool/main/a/atk1.0/libatk1.0-0_2.36.0-3build1_amd64.deb' libatk1.0-0_2.36.0-3build1_amd64.deb 51938 MD5Sum:26598b7c0efdab1db7d5c96720ca2da1
 'http://mirrors.aliyun.com/ubuntu/pool/main/a/at-spi2-atk/libatk-bridge2.0-0_2.38.0-3_amd64.deb' libatk-bridge2.0-0_2.38.0-3_amd64.deb 66556 MD5Sum:feef23cb5da429550f1177e1a9cd86a4
@@ -151,7 +153,7 @@ base-image=bench:ubuntu
 'http://mirrors.aliyun.com/ubuntu/pool/main/libx/libxpm/libxpm4_3.5.12-1ubuntu0.22.04.2_amd64.deb' libxpm4_1%3a3.5.12-1ubuntu0.22.04.2_amd64.deb 36706 MD5Sum:2fb8f666fdcc413497258203571cbc7b
 'http://mirrors.aliyun.com/ubuntu/pool/main/libg/libgd2/libgd3_2.3.0-2ubuntu2.3_amd64.deb' libgd3_2.3.0-2ubuntu2.3_amd64.deb 129426 MD5Sum:8024a2657fc9dd29823610ae66d11d56
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/glibc/libc-devtools_2.35-0ubuntu3.13_amd64.deb' libc-devtools_2.35-0ubuntu3.13_amd64.deb 28954 MD5Sum:23d5e2b66d92768aa013686803bdd5b9
-'http://mirrors.aliyun.com/ubuntu/pool/main/l/linux/linux-libc-dev_5.15.0-172.182_amd64.deb' linux-libc-dev_5.15.0-172.182_amd64.deb 1340152 MD5Sum:a8ae0f0a13cd4909761c4c96e6d2800e
+'http://mirrors.aliyun.com/ubuntu/pool/main/l/linux/linux-libc-dev_5.15.0-173.183_amd64.deb' linux-libc-dev_5.15.0-173.183_amd64.deb 1326964 MD5Sum:bc0af1a99c52cffdd1e11ef6d080d14c
 'http://mirrors.aliyun.com/ubuntu/pool/main/libx/libxcrypt/libcrypt-dev_4.4.27-1_amd64.deb' libcrypt-dev_1%3a4.4.27-1_amd64.deb 111682 MD5Sum:eccd44cb5f1fc684bd6e91b9aa8d8abb
 'http://mirrors.aliyun.com/ubuntu/pool/main/r/rpcsvc-proto/rpcsvc-proto_1.4.2-0ubuntu6_amd64.deb' rpcsvc-proto_1.4.2-0ubuntu6_amd64.deb 68494 MD5Sum:5136bea13e8705cfd7da44d621e9a1e2
 'http://mirrors.aliyun.com/ubuntu/pool/main/libt/libtirpc/libtirpc-dev_1.3.2-2ubuntu0.1_amd64.deb' libtirpc-dev_1.3.2-2ubuntu0.1_amd64.deb 192156 MD5Sum:18636c4ecacf072e62939af827218e60

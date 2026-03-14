@@ -10,7 +10,7 @@ export BENCH_INITCFG=${BENCH_INITCFG:-/etc/benchcfg}
 
 if [ `wc -l ${BENCH_INITCFG} | awk '{print $1}'` -le 15 ];
 then
-	printenv | grep BENCH | xargs -i echo export {} | sort | sudo tee -a ${BENCH_INITCFG} 1>&2 > /dev/null
+	printenv | grep BENCH | sed 's/^BENCH_ENV_EXPORT_//g' | xargs -i echo export {} | sort | sudo tee -a ${BENCH_INITCFG} 1>&2 > /dev/null
 fi
 
 . ${BENCH_INITCFG}
