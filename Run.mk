@@ -104,6 +104,12 @@ BENCH_RUN_ARGS				+= -e BENCH_RUNNING_NESTED=1
 BENCH_RUN_ARGS				+= -v /etc/localtime:/etc/localtime:ro
 BENCH_RUN_ARGS				+= -v /var/run/docker.sock:/var/run/docker.sock
 
+# Proxy Arguments
+BENCH_RUN_ARGS				+= \
+	-e "http_proxy=$(http_proxy)" \
+	-e "https_proxy=$(https_proxy)" \
+	-e "no_proxy=localhost,127.0.0.1"
+
 # X11 Forward Arguments
 BENCH_RUN_ARGS				+= \
 	-e DISPLAY=$${DISPLAY} \
