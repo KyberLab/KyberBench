@@ -29,7 +29,8 @@ RUN cd ${HOME} && \
 	cd dtc && \
 	sudo make PREFIX=/usr libfdt install && \
 	cd - && \
-	rm -rfv dtc
+	rm -rfv dtc && \
+	sudo rm -fv /lib/x86_64-linux-gnu/libfdt*
 
 
 RUN cd ${HOME} && \
