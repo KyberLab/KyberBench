@@ -66,7 +66,7 @@ endif
 
 bench_help : 
 	$(Q)$(call xprint_title,"KyberBench Help",$(HB_GREEN))
-	$(Q)$(call xprint_value,"Targets",	"\n"$(BENCH_TAG),$(HB_GREEN))
+	$(Q)$(call xprint_value,"Targets",	"\n"$(BENCH_IMAGE_TAG),$(HB_GREEN))
 	$(Q)$(call xprint_filled,$(HB_GREEN))
 
 
@@ -123,6 +123,8 @@ BENCH_USE_DNSMAP			?= 1
 
 
 # Image Build Config
+BENCH_IMG_DEFAULT			?= develop
+
 BENCH_IMG_DISTRO			?= ubuntu
 BENCH_IMG_VERSION			?= 22.04
 
@@ -205,7 +207,7 @@ DOCKER_FILE_ARGS			:= 	\
 	REPO_URL_PORT=$(REPO_URL_PORT) \
 	REPO_URL_GROUP=$(REPO_URL_GROUP) \
 
-BENCH_TAG   				?= $(notdir $(shell find $(DOCKER_FILE_ROOT)/* -maxdepth 0 -type d -name "[a-zA-Z0-9]*"))
+BENCH_IMAGE_TAG   			?= $(notdir $(shell find $(DOCKER_FILE_ROOT)/* -maxdepth 0 -type d -name "[a-zA-Z0-9]*"))
 
 
 $(eval $(call rule_inc,$(BENCH_ROOT_PATH)/Build.mk))

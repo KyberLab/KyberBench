@@ -4,22 +4,34 @@
 
 
 
-BENCH_IMAGE					:= $(patsubst %,image_%,$(BENCH_TAG))
+BENCH_ACTION_LIST			:= run rund exec ssh start stop rm rmi ip
 
-BENCH_RUN					:= $(patsubst %,run_%,$(BENCH_TAG))
-BENCH_RUND					:= $(patsubst %,rund_%,$(BENCH_TAG))
-BENCH_EXEC					:= $(patsubst %,exec_%,$(BENCH_TAG))
-BENCH_SSH					:= $(patsubst %,ssh_%,$(BENCH_TAG))
+BENCH_CONTAINER_RUN			:= $(patsubst %,run_%,$(BENCH_IMAGE_TAG))
+BENCH_CONTAINER_RUND		:= $(patsubst %,rund_%,$(BENCH_IMAGE_TAG))
+BENCH_CONTAINER_EXEC		:= $(patsubst %,exec_%,$(BENCH_IMAGE_TAG))
+BENCH_CONTAINER_SSH			:= $(patsubst %,ssh_%,$(BENCH_IMAGE_TAG))
 
-BENCH_START					:= $(patsubst %,start_%,$(BENCH_TAG))
-BENCH_STOP					:= $(patsubst %,stop_%,$(BENCH_TAG))
-BENCH_RM					:= $(patsubst %,rm_%,$(BENCH_TAG))
-BENCH_RMI					:= $(patsubst %,rmi_%,$(BENCH_TAG))
-BENCH_IP					:= $(patsubst %,ip_%,$(BENCH_TAG))
+BENCH_CONTAINER_START		:= $(patsubst %,start_%,$(BENCH_IMAGE_TAG))
+BENCH_CONTAINER_STOP		:= $(patsubst %,stop_%,$(BENCH_IMAGE_TAG))
+
+BENCH_CONTAINER_RM			:= $(patsubst %,rm_%,$(BENCH_IMAGE_TAG))
+BENCH_CONTAINER_RMI			:= $(patsubst %,rmi_%,$(BENCH_IMAGE_TAG))
+
+BENCH_CONTAINER_IP			:= $(patsubst %,ip_%,$(BENCH_IMAGE_TAG))
+
+BENCH_CONTAINER_IMAGE		:= $(patsubst %,bench_%,$(BENCH_IMAGE_TAG))
 
 
-.PHONY : $(BENCH_IMAGE) $(BENCH_RUN) $(BENCH_RUND) $(BENCH_EXEC) $(BENCH_SSH) \
-		$(BENCH_START) $(BENCH_STOP) $(BENCH_RM) $(BENCH_RMI) $(BENCH_IP)
+.PHONY : $(BENCH_CONTAINER_IMAGE) $(BENCH_CONTAINER_RUN) $(BENCH_CONTAINER_RUND) $(BENCH_CONTAINER_EXEC) $(BENCH_CONTAINER_SSH) \
+		$(BENCH_CONTAINER_START) $(BENCH_CONTAINER_STOP) $(BENCH_CONTAINER_RM) $(BENCH_CONTAINER_RMI) $(BENCH_CONTAINER_IP)
+
+
+
+###############################################################################
+# Default Action
+
+$(BENCH_ACTION_LIST) : 
+	$(Q)$(MAKE) $@_$(BENCH_IMG_DEFAULT)
 
 
 
@@ -264,11 +276,11 @@ endif
 #$(error BENCH_RUN_SCRIPT=$(BENCH_RUN_SCRIPT))
 
 ifeq ($(BENCH_IMG_FROM),remote)
-$(BENCH_IMAGE) : image_% : pull_%
+$(BENCH_CONTAINER_IMAGE) : bench_% : pull_%
 else # ($(BENCH_IMG_FROM),remote)
 
 ifeq ($(BENCH_IMG_FROM),local)
-$(BENCH_IMAGE) : image_% : build_%
+$(BENCH_CONTAINER_IMAGE) : bench_% : build_%
 
 else # ($(BENCH_IMG_FROM),local)
 $(error Invalid Image Type : $(BENCH_IMG_FROM))
@@ -276,12 +288,12 @@ endif # ($(BENCH_IMG_FROM),local)
 endif # ($(BENCH_IMG_FROM),remote)
 
 
-$(BENCH_RUN) : run_% : image_%
-	$(Q)$(call bench_run_cmd,$(subst image_,,$<),$(BENCH_RUN_SCRIPT))
+$(BENCH_CONTAINER_RUN) : run_% : bench_%
+	$(Q)$(call bench_run_cmd,$(subst bench_,,$<),$(BENCH_RUN_SCRIPT))
 
 
-$(BENCH_RUND) : rund_% : image_%
-	$(Q)if [ -z $(BENCH_RUNNING_NESTED) ]; then $(if $(call bench_daemon_id,$(subst image_,,$<)),$(call xprint,$(RED),Container \"$(BENCH_NAME)_$(subst image_,,$<)\" Has Been Started),$(call bench_rund_cmd,$(subst image_,,$<))); fi
+$(BENCH_CONTAINER_RUND) : rund_% : bench_%
+	$(Q)if [ -z $(BENCH_RUNNING_NESTED) ]; then $(if $(call bench_daemon_id,$(subst bench_,,$<)),$(call xprint,$(RED),Container \"$(BENCH_NAME)_$(subst bench_,,$<)\" Has Been Started),$(call bench_rund_cmd,$(subst bench_,,$<))); fi
 
 
 
@@ -293,8 +305,8 @@ define bench_start
 $(if $(call bench_daemon_id,$(1)),docker start $(call bench_daemon_name,$(1)) > /dev/null && $(ECHO) "start $(call bench_daemon_name,$(1)) ok")
 endef
 
-$(BENCH_START) : start_% : image_%
-	$(Q)$(call bench_start,$(subst image_,,$<))
+$(BENCH_CONTAINER_START) : start_% : bench_%
+	$(Q)$(call bench_start,$(subst bench_,,$<))
 
 
 
@@ -306,7 +318,7 @@ define bench_stop
 $(if $(call bench_daemon_id,$(1)),ssh-keygen -f "$${HOME}/.ssh/known_hosts" -R "$(call bench_ip,$(1))" > /dev/null 2>&1;docker stop -t0 $(call bench_daemon_name,$(1)) > /dev/null && $(ECHO) "stop $(call bench_daemon_name,$(1)) ok";)
 endef
 
-$(BENCH_STOP) : 
+$(BENCH_CONTAINER_STOP) : 
 	$(Q)$(call bench_stop,$(patsubst stop_%,%,$@))
 
 
@@ -319,7 +331,7 @@ define bench_rm
 $(if $(call bench_daemon_id,$(1)),docker rm $(call bench_daemon_name,$(1)) > /dev/null && $(ECHO) "remove $(call bench_daemon_name,$(1)) ok")
 endef
 
-$(BENCH_RM) : rm_% : stop_%
+$(BENCH_CONTAINER_RM) : rm_% : stop_%
 	$(Q)$(call bench_rm,$(patsubst rm_%,%,$@))
 
 
@@ -332,7 +344,7 @@ define bench_rmi
 $(if $(call bench_image_id,$(1)),docker rmi $(BENCH_NAME):$(1) > /dev/null && $(ECHO) "remove $(BENCH_NAME):$(1) ok")
 endef
 
-$(BENCH_RMI) : rmi_% : rm_%
+$(BENCH_CONTAINER_RMI) : rmi_% : rm_%
 	$(Q)$(call bench_rmi,$(patsubst rmi_%,%,$@))
 
 
@@ -345,17 +357,17 @@ define bench_ip
 $(shell docker exec $(BENCH_TERM_OPTS) $(call bench_daemon_name,$(1)) ip addr show eth0 | tr "/" " " | awk '$$1=="inet" {print $$2}')
 endef
 
-$(BENCH_IP) : ip_% : image_%
-	$(Q)echo -n $(call bench_ip,$(subst image_,,$<))
+$(BENCH_CONTAINER_IP) : ip_% : bench_%
+	$(Q)echo -n $(call bench_ip,$(subst bench_,,$<))
 
 
 
 ###############################################################################
 
-$(BENCH_EXEC) : exec_% : image_%
-	$(Q)-docker exec $(BENCH_TERM_OPTS) $(call bench_daemon_id,$(subst image_,,$<)) sh -c $(BENCH_RUN_SCRIPT); exit 0
+$(BENCH_CONTAINER_EXEC) : exec_% : bench_%
+	$(Q)-docker exec $(BENCH_TERM_OPTS) $(call bench_daemon_id,$(subst bench_,,$<)) sh -c $(BENCH_RUN_SCRIPT); exit 0
 
 
-$(BENCH_SSH) : ssh_% : image_%
-	$(Q)-ssh -AY -t $(BENCH_RUN_USER)@$(call bench_ip,$(subst image_,,$<)) "LC_ALL=en_US.UTF-8 exec dbus-run-session -- bash -l"; exit 0
+$(BENCH_CONTAINER_SSH) : ssh_% : bench_%
+	$(Q)-ssh -AY -t $(BENCH_RUN_USER)@$(call bench_ip,$(subst bench_,,$<)) "LC_ALL=en_US.UTF-8 exec dbus-run-session -- bash -l"; exit 0
 

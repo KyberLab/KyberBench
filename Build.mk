@@ -8,14 +8,14 @@
 ###############################################################################
 # Image Targets
 
-BENCH_DOCKGEN				:= $(patsubst %,dockgen_%,$(BENCH_TAG))
-BENCH_DOCKPIN				:= $(patsubst %,dockpin_%,$(BENCH_TAG))
-BENCH_DOCKCHECK				:= $(patsubst %,dockcheck_%,$(BENCH_TAG))
-BENCH_BUILD					:= $(patsubst %,build_%,$(BENCH_TAG))
-BENCH_SAVE					:= $(patsubst %,save_%,$(BENCH_TAG))
-BENCH_LOAD					:= $(patsubst %,load_%,$(BENCH_TAG))
-BENCH_PULL					:= $(patsubst %,pull_%,$(BENCH_TAG))
-BENCH_PUSH					:= $(patsubst %,push_%,$(BENCH_TAG))
+BENCH_DOCKGEN				:= $(patsubst %,dockgen_%,$(BENCH_IMAGE_TAG))
+BENCH_DOCKPIN				:= $(patsubst %,dockpin_%,$(BENCH_IMAGE_TAG))
+BENCH_DOCKCHECK				:= $(patsubst %,dockcheck_%,$(BENCH_IMAGE_TAG))
+BENCH_BUILD					:= $(patsubst %,build_%,$(BENCH_IMAGE_TAG))
+BENCH_SAVE					:= $(patsubst %,save_%,$(BENCH_IMAGE_TAG))
+BENCH_LOAD					:= $(patsubst %,load_%,$(BENCH_IMAGE_TAG))
+BENCH_PULL					:= $(patsubst %,pull_%,$(BENCH_IMAGE_TAG))
+BENCH_PUSH					:= $(patsubst %,push_%,$(BENCH_IMAGE_TAG))
 
 .PHONY : bench_depend $(BENCH_DOCKGEN) $(BENCH_DOCKPIN) $(BENCH_DOCKCHECK)
 .PHONY : $(BENCH_BUILD) $(BENCH_SAVE) $(BENCH_LOAD) $(BENCH_PULL) $(BENCH_PUSH)
@@ -99,7 +99,7 @@ endif
 BENCH_CHECK_CMD			:= $(if $(call is_in_docker),,sudo )docker images --format \"table {{.ID}}\" 2>/dev/null
 
 $(BENCH_DEPEND_FILE) : $(DOCKER_FILE_LIST)
-	$(Q)cd $(DOCKER_FILE_ROOT) && echo $(BENCH_TAG) | tr " " "\n" | \
+	$(Q)cd $(DOCKER_FILE_ROOT) && echo $(BENCH_IMAGE_TAG) | tr " " "\n" | \
 		xargs -i grep -H "^FROM.*${BENCH_NAME}" {}/Dockerfile | \
 		sed 's/\.\///g' | \
 		sed 's/\/Dockerfile:FROM ${BENCH_NAME}:/:/g' | \
