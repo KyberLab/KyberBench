@@ -1,3 +1,4 @@
 # dockpin apt lock file v1
 base-image=bench:qemu
 
+'http://mirrors.aliyun.com/ubuntu/pool/universe/n/nasm/nasm_2.15.05-1_amd64.deb' nasm_2.15.05-1_amd64.deb 375168 MD5Sum:cadec5968fc9b0b95eae054eb79add67
