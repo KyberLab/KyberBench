@@ -232,6 +232,7 @@ $(call bench_run_env,$(1)) && \
 docker run --rm \
 		-e BENCH_RUN_PLAT=$${BENCH_RUN_PLAT} \
 		-e BENCH_RUN_BOARD=$${BENCH_RUN_BOARD} \
+		-e BENCH_IMAGE_NAME=$(1) \
 		$(BENCH_CMD_ARGS) \
 		$(BENCH_RUN_ARGS) \
 		$(BENCH_NAME):$(1) \
@@ -248,6 +249,7 @@ docker run -d --restart=always \
 		--name $(call bench_daemon_name,$(1)) \
 		-e BENCH_RUN_PLAT=$${BENCH_RUN_PLAT} \
 		-e BENCH_RUN_BOARD=$${BENCH_RUN_BOARD} \
+		-e BENCH_IMAGE_NAME=$(1) \
 		$(BENCH_CMD_ARGS) \
 		$(BENCH_RUN_ARGS) \
 		$(BENCH_NAME):$(1)
