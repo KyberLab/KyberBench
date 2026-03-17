@@ -2,3 +2,4 @@ nasm
 grub-pc
 grub2-common
 grub-efi-amd64-bin
+python3-pyelftools

@@ -2,3 +2,4 @@
 base-image=bench:arm10
 
 'http://mirrors.aliyun.com/ubuntu/pool/universe/s/scons/scons_4.0.1%2bdfsg-2_all.deb' scons_4.0.1+dfsg-2_all.deb 468624 MD5Sum:fb9dec63c69c2715ce00f4d40f054cb8
+'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-pyelftools/python3-pyelftools_0.27-1_all.deb' python3-pyelftools_0.27-1_all.deb 97356 MD5Sum:46c0fc160dd71b5aa93eed0f31d001a4

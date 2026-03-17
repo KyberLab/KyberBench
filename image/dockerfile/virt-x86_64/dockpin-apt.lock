@@ -16,3 +16,4 @@ base-image=bench:qemu
 'http://mirrors.aliyun.com/ubuntu/pool/main/o/os-prober/os-prober_1.79ubuntu2_amd64.deb' os-prober_1.79ubuntu2_amd64.deb 19332 MD5Sum:d5096c2eae791417d96642f83a28e685
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/sbsigntool/sbsigntool_0.9.4-2ubuntu2_amd64.deb' sbsigntool_0.9.4-2ubuntu2_amd64.deb 53802 MD5Sum:08276761253842dca7ffdbc9c974d9ff
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/secureboot-db/secureboot-db_1.8_amd64.deb' secureboot-db_1.8_amd64.deb 9556 MD5Sum:c8956557c8b02d14822ecab735676e7a
+'http://mirrors.aliyun.com/ubuntu/pool/main/p/python-pyelftools/python3-pyelftools_0.27-1_all.deb' python3-pyelftools_0.27-1_all.deb 97356 MD5Sum:46c0fc160dd71b5aa93eed0f31d001a4
