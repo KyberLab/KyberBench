@@ -6,14 +6,6 @@ FROM {{ BENCH_NAME }}:arm10
 
 
 
-# Update dockpin-apt.lock
-# https://github.com/Jille/dockpin
-# go install github.com/Jille/dockpin@latest
-# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
-
-COPY dockpin-apt.lock /tmp
-RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
-
 
 RUN cd /usr/local/ && \
 	sudo wget {{ ARM_ELF_GCC_URL }} && \
@@ -29,3 +21,14 @@ RUN cd /usr/local/ && \
 
 
 RUN curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo | sudo tee /usr/bin/repo > /dev/null && sudo chmod a+x /usr/bin/repo
+
+
+# Update dockpin-apt.lock
+# https://github.com/Jille/dockpin
+# go install github.com/Jille/dockpin@latest
+# Host $ ~/go/bin/dockpin apt pin --base-image {{ BENCH_NAME }}:{{ BENCH_IMG_DISTRO }}
+
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+
