@@ -14,6 +14,3 @@ FROM {{ BENCH_NAME }}:qemu
 COPY dockpin-apt.lock /tmp
 RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
 
-
-RUN curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo | sudo tee /usr/bin/repo > /dev/null && sudo chmod a+x /usr/bin/repo
-

@@ -20,3 +20,8 @@ COPY requirements.txt /tmp/
 RUN sudo -H pip install --no-cache-dir --require-hashes --no-warn-script-location -r /tmp/requirements.txt && sudo rm -f /tmp/requirements.txt
 
 
+# RUN sudo curl -L https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o /usr/bin/repo && sudo chmod a+x /usr/bin/repo
+COPY repo /usr/bin/repo
+RUN sudo chmod a+x /usr/bin/repo
+RUN echo "export REPO_URL='https://github.com/KyberLab/git-repo.git'" | sudo tee -a {{ BENCH_INITRC }}
+
