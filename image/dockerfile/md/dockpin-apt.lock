@@ -5,7 +5,7 @@ base-image=bench:nodejs
 'http://mirrors.aliyun.com/ubuntu/pool/main/f/fuse3/fuse3_3.10.5-1build1_amd64.deb' fuse3_3.10.5-1build1_amd64.deb 24744 MD5Sum:dbbf842fa1b8ce3d9f6a74b7373d7458
 'http://mirrors.aliyun.com/ubuntu/pool/main/l/lzo2/liblzo2-2_2.10-2build3_amd64.deb' liblzo2-2_2.10-2build3_amd64.deb 53658 MD5Sum:cef13138ae8b6e600c4758ec4f2331c7
 'http://mirrors.aliyun.com/ubuntu/pool/main/s/squashfs-tools/squashfs-tools_4.5-3build1_amd64.deb' squashfs-tools_1%3a4.5-3build1_amd64.deb 158782 MD5Sum:89c9a90e53c8d1514763f3c5beafd873
-'http://mirrors.aliyun.com/ubuntu/pool/main/s/snapd/snapd_2.73%2bubuntu22.04_amd64.deb' snapd_2.73+ubuntu22.04_amd64.deb 32250944 MD5Sum:4553a52aa07485493e7a2ad9634dd3a9
+'http://mirrors.aliyun.com/ubuntu/pool/main/s/snapd/snapd_2.73%2bubuntu22.04.1_amd64.deb' snapd_2.73+ubuntu22.04.1_amd64.deb 32618858 MD5Sum:23005d619c7d1e5fb2ba5474b83f9048
 'http://mirrors.aliyun.com/ubuntu/pool/universe/c/chromium-browser/chromium-browser_85.0.4183.83-0ubuntu2.22.04.1_amd64.deb' chromium-browser_1%3a85.0.4183.83-0ubuntu2.22.04.1_amd64.deb 49248 MD5Sum:0eee862b955ee542436fb6f080da77d0
 'http://mirrors.aliyun.com/ubuntu/pool/universe/f/fonts-arphic-bkai00mp/fonts-arphic-bkai00mp_2.10-21_all.deb' fonts-arphic-bkai00mp_2.10-21_all.deb 4953088 MD5Sum:c572b747a4edaad48fc97ac638cac152
 'http://mirrors.aliyun.com/ubuntu/pool/universe/f/fonts-arphic-bsmi00lp/fonts-arphic-bsmi00lp_2.10-18_all.deb' fonts-arphic-bsmi00lp_2.10-18_all.deb 3830744 MD5Sum:1bbbdb295715649dcb1ec417e89c7ac4
@@ -45,7 +45,7 @@ base-image=bench:nodejs
 'http://mirrors.aliyun.com/ubuntu/pool/main/p/pcsc-lite/libpcsclite1_1.9.5-3ubuntu1_amd64.deb' libpcsclite1_1.9.5-3ubuntu1_amd64.deb 19796 MD5Sum:347f0432d5d57cd67db767435f7fdb9a
 'http://mirrors.aliyun.com/ubuntu/pool/main/o/openjdk-lts/openjdk-11-jre-headless_11.0.30%2b7-1ubuntu1%7e22.04_amd64.deb' openjdk-11-jre-headless_11.0.30+7-1ubuntu1~22.04_amd64.deb 42594774 MD5Sum:545e82dc5fb012b4524bf800e000e72c
 'http://mirrors.aliyun.com/ubuntu/pool/main/j/java-common/default-jre-headless_1.11-72build2_amd64.deb' default-jre-headless_2%3a1.11-72build2_amd64.deb 3042 MD5Sum:8dc936fe2a0835e1c4554b6d16b7bfca
-'http://mirrors.aliyun.com/ubuntu/pool/main/c/ca-certificates-java/ca-certificates-java_20190909ubuntu1.2_all.deb' ca-certificates-java_20190909ubuntu1.2_all.deb 12136 MD5Sum:f3ac1d80bec590ce57c688a483dca904
+'http://mirrors.aliyun.com/ubuntu/pool/main/c/ca-certificates-java/ca-certificates-java_20190909ubuntu1.3_all.deb' ca-certificates-java_20190909ubuntu1.3_all.deb 12256 MD5Sum:d0b998fc8014ee2651e37216e4acb55f
 'http://mirrors.aliyun.com/ubuntu/pool/main/o/openjdk-lts/openjdk-11-jre_11.0.30%2b7-1ubuntu1%7e22.04_amd64.deb' openjdk-11-jre_11.0.30+7-1ubuntu1~22.04_amd64.deb 213544 MD5Sum:b42585c7a0a1172b15176d171788893a
 'http://mirrors.aliyun.com/ubuntu/pool/main/j/java-common/default-jre_1.11-72build2_amd64.deb' default-jre_2%3a1.11-72build2_amd64.deb 896 MD5Sum:52db584df8499fc6020c3edd13a25475
 'http://mirrors.aliyun.com/ubuntu/pool/main/o/openjdk-lts/openjdk-11-jdk-headless_11.0.30%2b7-1ubuntu1%7e22.04_amd64.deb' openjdk-11-jdk-headless_11.0.30+7-1ubuntu1~22.04_amd64.deb 73657990 MD5Sum:da673b27847acccae733b2f933298bf1
