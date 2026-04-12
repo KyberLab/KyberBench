@@ -54,7 +54,7 @@ base-image=bench:python3
 'http://mirrors.aliyun.com/ubuntu/pool/main/libt/libtasn1-6/libtasn1-6-dev_4.18.0-4ubuntu0.2_amd64.deb' libtasn1-6-dev_4.18.0-4ubuntu0.2_amd64.deb 91798 MD5Sum:c28bb0a0b33fc01ff94f9c05cbe74d44
 'http://mirrors.aliyun.com/ubuntu/pool/main/n/nettle/nettle-dev_3.7.3-1build2_amd64.deb' nettle-dev_3.7.3-1build2_amd64.deb 1135160 MD5Sum:4bec23f1b59f0706b42c6194a954e3ff
 'http://mirrors.aliyun.com/ubuntu/pool/main/g/gnutls28/libgnutls28-dev_3.7.3-4ubuntu1.8_amd64.deb' libgnutls28-dev_3.7.3-4ubuntu1.8_amd64.deb 1044824 MD5Sum:ba14965f0b8dc1a45ce092fd044bb6a0
-'http://mirrors.aliyun.com/ubuntu/pool/main/o/openssl/libssl-dev_3.0.2-0ubuntu1.21_amd64.deb' libssl-dev_3.0.2-0ubuntu1.21_amd64.deb 2374862 MD5Sum:e1b05ee3a318a2161528388da33a4677
+'http://mirrors.aliyun.com/ubuntu/pool/main/o/openssl/libssl-dev_3.0.2-0ubuntu1.23_amd64.deb' libssl-dev_3.0.2-0ubuntu1.23_amd64.deb 2376178 MD5Sum:a667fe3ab9e491ed1de79e8833ea9e51
 'http://mirrors.aliyun.com/ubuntu/pool/main/l/lz4/lz4_1.9.3-2build2_amd64.deb' lz4_1.9.3-2build2_amd64.deb 90030 MD5Sum:188cec67bda4d093a5d0489f0da26795
 'http://mirrors.aliyun.com/ubuntu/pool/universe/n/ninja-build/ninja-build_1.10.1-1_amd64.deb' ninja-build_1.10.1-1_amd64.deb 111368 MD5Sum:5a1d24d808ef8e49f1dcaffe30cc130d
 'http://mirrors.aliyun.com/ubuntu/pool/universe/m/meson/meson_0.61.2-1_all.deb' meson_0.61.2-1_all.deb 518618 MD5Sum:ca899f3b1ac841d7be10263a7bac8268
