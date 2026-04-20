@@ -79,7 +79,7 @@ endef
 # bench_daemon_name
 # $(1) docker image tag
 define bench_daemon_name
-$(BENCH_NAME)_$(1)_$(shell whoami)_$(shell echo $(BENCH_ROOT_PATH) | md5sum | cut -f1 -d " " | head -c6)
+$(shell echo $(BENCH_NAME) | tr '/' '_')_$(1)_$(shell whoami)_$(shell echo $(BENCH_ROOT_PATH) | md5sum | cut -f1 -d " " | head -c6)
 endef
 
 
