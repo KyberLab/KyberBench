@@ -123,6 +123,8 @@ BENCH_USE_DNSMAP			?= 1
 
 
 # Image Build Config
+BENCH_IMG_FROM				?= remote
+
 BENCH_IMG_DEFAULT			?= develop
 
 BENCH_IMG_DISTRO			?= ubuntu

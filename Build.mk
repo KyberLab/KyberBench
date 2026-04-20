@@ -16,6 +16,8 @@ BENCH_SAVE					:= $(patsubst %,save_%,$(BENCH_IMAGE_TAG))
 BENCH_LOAD					:= $(patsubst %,load_%,$(BENCH_IMAGE_TAG))
 BENCH_PULL					:= $(patsubst %,pull_%,$(BENCH_IMAGE_TAG))
 BENCH_PUSH					:= $(patsubst %,push_%,$(BENCH_IMAGE_TAG))
+BENCH_IMAGE					:= $(patsubst %,bench_%,$(BENCH_IMAGE_TAG))
+
 
 .PHONY : bench_depend $(BENCH_DOCKGEN) $(BENCH_DOCKPIN) $(BENCH_DOCKCHECK)
 .PHONY : $(BENCH_BUILD) $(BENCH_SAVE) $(BENCH_LOAD) $(BENCH_PULL) $(BENCH_PUSH)
@@ -103,12 +105,25 @@ $(BENCH_DEPEND_FILE) : $(DOCKER_FILE_LIST)
 		xargs -i grep -H "^FROM.*${BENCH_NAME}" {}/Dockerfile | \
 		sed 's/\.\///g' | \
 		sed 's#\/Dockerfile:FROM ${BENCH_NAME}:#:#g' | \
-		awk -F ":" '{print "build_" $$1 " : $$(if $$(shell $(BENCH_CHECK_CMD) $(BENCH_NAME):"$$1" | grep -v \"IMAGE ID\"),,build_"$$2")"}' | \
+		awk -F ":" '{print "build_" $$1 " : $$(if $$(shell $(BENCH_CHECK_CMD) $(BENCH_NAME):"$$1" | grep -v \"IMAGE ID\"),,bench_"$$2")"}' | \
 		grep -v "^build_$(BENCH_IMG_DISTRO)" > $(BENCH_DEPEND_FILE)
 
 -include $(BENCH_DEPEND_FILE)
 
 bench_depend : $(BENCH_DEPEND_FILE)
+
+
+ifeq ($(BENCH_IMG_FROM),remote)
+$(BENCH_IMAGE) : bench_% : pull_%
+else # ($(BENCH_IMG_FROM),remote)
+
+ifeq ($(BENCH_IMG_FROM),local)
+$(BENCH_IMAGE) : bench_% : build_%
+
+else # ($(BENCH_IMG_FROM),local)
+$(error Invalid Image Type : $(BENCH_IMG_FROM))
+endif # ($(BENCH_IMG_FROM),local)
+endif # ($(BENCH_IMG_FROM),remote)
 
 
 
@@ -206,9 +221,9 @@ $(BENCH_LOAD) :
 define bench_pull_helper
 	$(Q)$(call xprint_title,"Pull $(1):$(2) Image",$(BENCH_TITLE_COLOR))
 	$(Q)$(call xprint_filled,$(BENCH_COLOR))
-	$(Q)docker pull $(3)/$(1):$(2)
-	$(Q)docker tag $(3)/$(1):$(2) $(1):$(2)
-	$(Q)docker rmi $(3)/$(1):$(2)
+	$(Q)docker pull $(if $(3),$(3)/)$(1):$(2)
+	$(Q)$(if $(3),docker tag $(3)/$(1):$(2) $(1):$(2))
+	$(Q)$(if $(3),docker rmi $(3)/$(1):$(2))
 	$(Q)$(call xprint_filled,$(BENCH_COLOR))
 endef
 
@@ -223,7 +238,7 @@ endef
 
 
 $(BENCH_PULL) : 
-	$(call bench_pull,$(BENCH_NAME),$(patsubst pull_%,%,$@),$(BENCH_REPO_BASE))
+	$(call bench_pull,$(BENCH_NAME),$(patsubst pull_%,%,$@),)
 
 
 # bench_push
