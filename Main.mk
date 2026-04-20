@@ -104,8 +104,8 @@ USER_RUN_CMD				?= bash
 
 # Basic Config
 BENCH_NAME					?= superyongzhe/bench
-BENCH_GROUP					?= $(BENCH_NAME)
-BENCH_USER					?= $(BENCH_NAME)
+BENCH_GROUP					?= bench
+BENCH_USER					?= bench
 BENCH_GID					?= $(shell id -g)
 BENCH_UID					?= $(shell id -u)
 
