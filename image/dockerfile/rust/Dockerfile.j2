@@ -39,3 +39,5 @@ RUN echo "export RUSTUP_DIST_SERVER={{ RUSTUP_DIST_SERVER }}" | sudo tee -a {{ C
 	echo "export CARGO_HOME={{ CARGO_HOME }}" | sudo tee -a {{ CARGO_HOME }}/env && \
 	echo ". {{ CARGO_HOME }}/env" | sudo tee -a {{ BENCH_INITRC }}
 
+RUN sudo chmod -R o+rw {{ RUSTUP_HOME }} {{ CARGO_HOME }}
+
