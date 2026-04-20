@@ -91,9 +91,9 @@ $(BENCH_DOCKCHECK) : dockcheck_% : $(DOCKER_FILE_ROOT)/%/Dockerfile
 # Image Depends
 
 ifneq ($(call is_in_docker),)
-BENCH_DEPEND_FILE			:= $(DOCKER_FILE_ROOT)/.depend.host.$(BENCH_NAME)
+BENCH_DEPEND_FILE			:= $(DOCKER_FILE_ROOT)/.depend.host.$(shell echo $(BENCH_NAME) | tr / _)
 else
-BENCH_DEPEND_FILE			:= $(DOCKER_FILE_ROOT)/.depend.docker.$(BENCH_NAME)
+BENCH_DEPEND_FILE			:= $(DOCKER_FILE_ROOT)/.depend.docker.$(shell echo $(BENCH_NAME) | tr / _)
 endif
 
 BENCH_CHECK_CMD			:= $(if $(call is_in_docker),,sudo )docker images --format \"table {{.ID}}\" 2>/dev/null
@@ -102,7 +102,7 @@ $(BENCH_DEPEND_FILE) : $(DOCKER_FILE_LIST)
 	$(Q)cd $(DOCKER_FILE_ROOT) && echo $(BENCH_IMAGE_TAG) | tr " " "\n" | \
 		xargs -i grep -H "^FROM.*${BENCH_NAME}" {}/Dockerfile | \
 		sed 's/\.\///g' | \
-		sed 's/\/Dockerfile:FROM ${BENCH_NAME}:/:/g' | \
+		sed 's#\/Dockerfile:FROM ${BENCH_NAME}:#:#g' | \
 		awk -F ":" '{print "build_" $$1 " : $$(if $$(shell $(BENCH_CHECK_CMD) $(BENCH_NAME):"$$1" | grep -v \"IMAGE ID\"),,build_"$$2")"}' | \
 		grep -v "^build_$(BENCH_IMG_DISTRO)" > $(BENCH_DEPEND_FILE)
 
