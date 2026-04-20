@@ -1,0 +1,20 @@
+# dockpin apt lock file v1
+base-image=superyongzhe/bench:qemu
+
+'http://mirrors.aliyun.com/ubuntu/pool/main/b/binutils/binutils-riscv64-linux-gnu_2.38-4ubuntu2.12_amd64.deb' binutils-riscv64-linux-gnu_2.38-4ubuntu2.12_amd64.deb 1351326 MD5Sum:8743adac86770fb98cbc042d6815a532
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/gcc-11-riscv64-linux-gnu-base_11.4.0-1ubuntu1%7e22.04cross1_amd64.deb' gcc-11-riscv64-linux-gnu-base_11.4.0-1ubuntu1~22.04cross1_amd64.deb 20534 MD5Sum:be850bb5d05a975ad5d88df6ceb54d82
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/cpp-11-riscv64-linux-gnu_11.4.0-1ubuntu1%7e22.04cross1_amd64.deb' cpp-11-riscv64-linux-gnu_11.4.0-1ubuntu1~22.04cross1_amd64.deb 7872346 MD5Sum:e96a648e21221c2e54e4fe40bb71ce8c
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-defaults-ports/cpp-riscv64-linux-gnu_11.2.0--1ubuntu1_amd64.deb' cpp-riscv64-linux-gnu_4%3a11.2.0--1ubuntu1_amd64.deb 3536 MD5Sum:50c12108e3586555296afc481a694d61
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/gcc-11-cross-base-ports_11.4.0-1ubuntu1%7e22.04cross1_all.deb' gcc-11-cross-base-ports_11.4.0-1ubuntu1~22.04cross1_all.deb 15538 MD5Sum:c4a82741247518c16e62866de6bf5b40
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-12-cross-ports/gcc-12-cross-base-ports_12.3.0-1ubuntu1%7e22.04cross1_all.deb' gcc-12-cross-base-ports_12.3.0-1ubuntu1~22.04cross1_all.deb 15714 MD5Sum:668543873d1df45994ebe03bf97610e3
+'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cross-toolchain-base-ports/libc6-riscv64-cross_2.35-0ubuntu3cross4_all.deb' libc6-riscv64-cross_2.35-0ubuntu3cross4_all.deb 1073598 MD5Sum:9e34aa13b28fdb61f0329387145c17e4
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-12-cross-ports/libgcc-s1-riscv64-cross_12.3.0-1ubuntu1%7e22.04cross1_all.deb' libgcc-s1-riscv64-cross_12.3.0-1ubuntu1~22.04cross1_all.deb 44346 MD5Sum:2f06d092cceb37f1043d01e137cc49fd
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-12-cross-ports/libgomp1-riscv64-cross_12.3.0-1ubuntu1%7e22.04cross1_all.deb' libgomp1-riscv64-cross_12.3.0-1ubuntu1~22.04cross1_all.deb 110274 MD5Sum:9414cedafa1805b11626e5a86a6a8d9d
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-12-cross-ports/libatomic1-riscv64-cross_12.3.0-1ubuntu1%7e22.04cross1_all.deb' libatomic1-riscv64-cross_12.3.0-1ubuntu1~22.04cross1_all.deb 7634 MD5Sum:8379dd553db439661050a863d7122afe
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/libasan6-riscv64-cross_11.4.0-1ubuntu1%7e22.04cross1_all.deb' libasan6-riscv64-cross_11.4.0-1ubuntu1~22.04cross1_all.deb 2099162 MD5Sum:42bf02d02bfe833761e4af5ab6836827
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/libgcc-11-dev-riscv64-cross_11.4.0-1ubuntu1%7e22.04cross1_all.deb' libgcc-11-dev-riscv64-cross_11.4.0-1ubuntu1~22.04cross1_all.deb 2413180 MD5Sum:afb80cdab1bae1854f7d1d87425041f2
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-11-cross-ports/gcc-11-riscv64-linux-gnu_11.4.0-1ubuntu1%7e22.04cross1_amd64.deb' gcc-11-riscv64-linux-gnu_11.4.0-1ubuntu1~22.04cross1_amd64.deb 15496906 MD5Sum:cf032fb50cc43ce84643c885a02f53ad
+'http://mirrors.aliyun.com/ubuntu/pool/universe/g/gcc-defaults-ports/gcc-riscv64-linux-gnu_11.2.0--1ubuntu1_amd64.deb' gcc-riscv64-linux-gnu_4%3a11.2.0--1ubuntu1_amd64.deb 1234 MD5Sum:2112ad0cc033126ca60b0b8deda2fb2e
+'http://mirrors.aliyun.com/ubuntu/pool/main/q/qemu/qemu-system-misc_6.2%2bdfsg-2ubuntu6.30_amd64.deb' qemu-system-misc_1%3a6.2+dfsg-2ubuntu6.30_amd64.deb 41043262 MD5Sum:8d2b099e7038cb32a438d77f87ad810a
+'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cross-toolchain-base-ports/linux-libc-dev-riscv64-cross_5.15.0-22.22cross4_all.deb' linux-libc-dev-riscv64-cross_5.15.0-22.22cross4_all.deb 1197974 MD5Sum:88fd2d914973e2349bf2a56c9c372678
+'http://mirrors.aliyun.com/ubuntu/pool/universe/c/cross-toolchain-base-ports/libc6-dev-riscv64-cross_2.35-0ubuntu3cross4_all.deb' libc6-dev-riscv64-cross_2.35-0ubuntu3cross4_all.deb 3162152 MD5Sum:ca7d9bd12b6410e60a61b71a8ef9d7b3

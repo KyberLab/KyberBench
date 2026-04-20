@@ -1,0 +1,10 @@
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
+#
+#
+
+
+RUSTUP_DIST_SERVER : https://rsproxy.cn
+RUSTUP_UPDATE_ROOT : https://rsproxy.cn/rustup
+RUSTUP_HOME : /usr/local/rustup
+CARGO_HOME : /usr/local/cargo
