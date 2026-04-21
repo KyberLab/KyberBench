@@ -246,8 +246,9 @@ $(BENCH_PULL) :
 # $(2) docker tag
 # $(3) docker repo base
 define bench_push
-$(if $(call bench_image_id,$(2)),docker tag $(1):$(2) $(3)/$(1):$(2) && docker push $(3)/$(1):$(2) && docker rmi $(3)/$(1):$(2),,$(call xprint,$(RED),"Image Is Not Exist !"))
+$(if $(call bench_image_id,$(2)),docker push $(1):$(2),,$(call xprint,$(RED),"Image Is Not Exist !"))
 endef
+#$(if $(call bench_image_id,$(2)),docker tag $(1):$(2) $(3)/$(1):$(2) && docker push $(3)/$(1):$(2) && docker rmi $(3)/$(1):$(2),,$(call xprint,$(RED),"Image Is Not Exist !"))
 
 
 $(BENCH_PUSH) : push_% : build_%
