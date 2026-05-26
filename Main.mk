@@ -216,3 +216,5 @@ $(eval $(call rule_inc,$(BENCH_ROOT_PATH)/Build.mk))
 
 $(eval $(call rule_inc,$(BENCH_ROOT_PATH)/Run.mk))
 
+$(eval $(call rule_inc,$(BENCH_ROOT_PATH)/MultiArch.mk))
+

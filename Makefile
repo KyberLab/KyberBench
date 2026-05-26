@@ -90,3 +90,74 @@ all	: build_base
 
 $(eval $(call rule_inc,$(BENCH_ROOT_PATH)/Main.mk))
 
+
+###############################################################################
+# Multi-Architecture Build Convenience Targets
+
+# Multi-Arch Setup and Build
+.PHONY : multiarch-enable multiarch-disable
+
+multiarch-enable :
+	$(Q)$(call xprint_title,"Enable Multi-Arch Build",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch-setup
+	$(Q)make multiarch-create
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
+
+multiarch-disable :
+	$(Q)$(call xprint_title,"Disable Multi-Arch Build",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch-default
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
+
+# Build with specific platforms
+# Usage: make multiarch-build PLATFORMS=linux/amd64,linux/arm64
+.PHONY : multiarch-build-platforms
+
+multiarch-build-platforms :
+	$(Q)$(call xprint_title,"Build Multi-Arch Images",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_info,"Platforms: $(or $(PLATFORMS),$(BENCH_MULTIARCH_PLATFORMS))",$(BENCH_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch-build BENCH_MULTIARCH_PLATFORMS=$(or $(PLATFORMS),$(BENCH_MULTIARCH_PLATFORMS))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
+
+# Push with specific platforms
+# Usage: make multiarch-push-platforms PLATFORMS=linux/amd64,linux/arm64
+.PHONY : multiarch-push-platforms
+
+multiarch-push-platforms :
+	$(Q)$(call xprint_title,"Build and Push Multi-Arch Images",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_info,"Platforms: $(or $(PLATFORMS),$(BENCH_MULTIARCH_PLATFORMS))",$(BENCH_COLOR))
+	$(Q)$(call xprint_info,"Registry: $(BENCH_REPO_BASE)",$(BENCH_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch-push BENCH_MULTIARCH_PLATFORMS=$(or $(PLATFORMS),$(BENCH_MULTIARCH_PLATFORMS))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
+
+# Build specific image for multiple platforms
+# Usage: make multiarch-build-image IMAGE=develop
+.PHONY : multiarch-build-image
+
+multiarch-build-image :
+	$(Q)$(call xprint_title,"Build Multi-Arch Image: $(or $(IMAGE),$(firstword $(BENCH_IMAGE_TAG)))",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_info,"Platforms: $(BENCH_MULTIARCH_PLATFORMS)",$(BENCH_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch_build_$(or $(IMAGE),$(firstword $(BENCH_IMAGE_TAG)))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
+
+# Push specific image for multiple platforms
+# Usage: make multiarch-push-image IMAGE=develop
+.PHONY : multiarch-push-image
+
+multiarch-push-image :
+	$(Q)$(call xprint_title,"Build and Push Multi-Arch Image: $(or $(IMAGE),$(firstword $(BENCH_IMAGE_TAG)))",$(BENCH_TITLE_COLOR))
+	$(Q)$(call xprint_info,"Platforms: $(BENCH_MULTIARCH_PLATFORMS)",$(BENCH_COLOR))
+	$(Q)$(call xprint_info,"Registry: $(BENCH_REPO_BASE)",$(BENCH_COLOR))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+	$(Q)make multiarch_push_$(or $(IMAGE),$(firstword $(BENCH_IMAGE_TAG)))
+	$(Q)$(call xprint_filled,$(BENCH_COLOR))
+
