@@ -115,8 +115,220 @@ make run_<image-name> USER_RUN_CMD="<command>"
 
 ### 实用脚本
 
-- **kyberdocker**：用于支持Dockerfile Jinja2模板的脚本
-- **kyberinstall**：用于根据dockpin的apt lock文件安装软件包和管理依赖的脚本
+- **kyberdocker**：用于支持 Dockerfile Jinja2 模板的脚本
+- **kyberinstall**：用于根据 dockpin 的 apt lock 文件安装软件包和管理依赖的脚本
+
+---
+
+## KyberDocker 模板系统
+
+### 1. 原理说明
+
+KyberDocker 是 KyberBench 提供的一个基于 **Jinja2 + YAML** 的 Dockerfile 模板渲染工具。它允许您：
+
+- 使用 Jinja2 模板语法编写可复用的 Dockerfile 模板
+- 通过 YAML 配置文件管理模板变量
+- 实现 Dockerfile 的可编程化和参数化
+
+**工作流程**：
+
+```
+Dockerfile.j2 (模板) + KyberDocker.yaml (变量) → Dockerfile (输出)
+```
+
+### 2. J2 模板配置
+
+#### 2.1 模板文件
+
+每个镜像目录下可以包含 `Dockerfile.j2` 文件，使用 Jinja2 语法：
+
+```jinja2
+# Dockerfile.j2 示例
+FROM {{ BENCH_NAME }}:python3
+
+# 使用变量
+COPY dockpin-apt.lock /tmp
+RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
+
+# 条件判断
+{% if INSTALL_PYTHON_PACKAGES %}
+COPY requirements.txt /tmp/
+RUN sudo -H pip install --no-cache-dir -r /tmp/requirements.txt
+{% endif %}
+
+# 循环
+{% for tool in TOOLS %}
+RUN sudo apt-get install -y {{ tool }}
+{% endfor %}
+```
+
+#### 2.2 Jinja2 语法支持
+
+| 语法 | 说明 | 示例 |
+|------|------|------|
+| `{{ var }}` | 变量引用 | `{{ BENCH_NAME }}` |
+| `{% if %}` | 条件判断 | `{% if DEBUG %}` |
+| `{% for %}` | 循环 | `{% for item in list %}` |
+| `{% set %}` | 变量赋值 | `{% set version = "1.0" %}` |
+| `{{ var | filter }}` | 过滤器 | `{{ name | upper }}` |
+
+### 3. 变量配置文件
+
+#### 3.1 全局配置
+
+全局配置文件位于 `image/config/KyberDocker.yaml`：
+
+```yaml
+# image/config/KyberDocker.yaml
+BENCH_NAME: "superyongzhe/bench"
+BENCH_INITRC: "/etc/profile.d/init.sh"
+BENCH_IMG_DISTRO: "ubuntu"
+```
+
+#### 3.2 镜像特定配置
+
+每个镜像目录下可以创建 `KyberDocker.yaml`，覆盖全局配置：
+
+```yaml
+# image/dockerfile/linaro/KyberDocker.yaml
+LINARO_GCC_URL: https://releases.linaro.org/components/toolchain/binaries/7.3-2018.05/aarch64-linux-gnu/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+LINARO_GCC_PACKAGE_NAME: gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu.tar.xz
+```
+
+### 4. 变量优先级
+
+变量按照以下优先级进行合并（后面的会覆盖前面的）：
+
+| 优先级 | 来源 | 说明 |
+|--------|------|------|
+| 1 (最低) | `-c` 指定的配置文件 | 通过命令行 `-c` 参数指定的 YAML 文件 |
+| 2 | 全局配置 `image/config/KyberDocker.yaml` | 全局默认配置 |
+| 3 | 镜像配置目录 `KyberDocker.yaml` | 当前镜像目录下的配置 |
+| 4 | `-w` 工作目录下的 `KyberDocker.yaml` | 通过 `-w` 指定的工作目录中的配置 |
+| 5 (最高) | `-e` 命令行变量 | 通过 `-e name=value` 指定的变量 |
+
+**优先级示意图**：
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  5. -e name=value           (命令行变量)                    │
+│      ↓ 覆盖                                                 │
+│  4. -w 工作目录/KyberDocker.yaml                            │
+│      ↓ 覆盖                                                 │
+│  3. 镜像目录/KyberDocker.yaml                               │
+│      ↓ 覆盖                                                 │
+│  2. image/config/KyberDocker.yaml    (全局配置)             │
+│      ↓ 覆盖                                                 │
+│  1. -c 指定的配置文件       (最低优先级)                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 5. kyberdocker 命令用法
+
+```bash
+# 基本用法（使用默认配置）
+./kyberdocker
+
+# 指定工作目录
+./kyberdocker -w /path/to/workdir
+
+# 指定自定义配置文件
+./kyberdocker -c myconfig.yaml
+
+# 指定模板文件
+./kyberdocker -t Dockerfile.j2
+
+# 指定输出文件
+./kyberdocker -o output/Dockerfile
+
+# 添加命令行变量（最高优先级）
+./kyberdocker -e BENCH_NAME=myrepo/bench -e DEBUG=true
+
+# 完整示例
+./kyberdocker -w ./bench -c config.yaml -t Dockerfile.j2 -o Dockerfile -e VERSION=1.0
+```
+
+### 6. 命令行参数说明
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `-w` | 工作目录 | 当前目录 |
+| `-c` | YAML 配置文件路径 | `KyberDocker.yaml` |
+| `-t` | Jinja2 模板文件路径 | `Dockerfile.j2` |
+| `-o` | 输出 Dockerfile 路径 | `Dockerfile` |
+| `-e` | 自定义变量（格式：name=value） | 无 |
+
+### 7. 实际应用示例
+
+#### 示例 1：构建特定架构的镜像
+
+```yaml
+# image/dockerfile/virt-aarch64/KyberDocker.yaml
+ARCH: aarch64
+CROSS_COMPILE: aarch64-linux-gnu-
+QEMU_ARCH: aarch64
+```
+
+```jinja2
+# Dockerfile.j2
+FROM {{ BENCH_NAME }}:system
+
+RUN sudo apt-get install -y qemu-system-{{ QEMU_ARCH }}
+ENV CROSS_COMPILE={{ CROSS_COMPILE }}
+```
+
+#### 示例 2：条件安装依赖
+
+```yaml
+# KyberDocker.yaml
+INSTALL_GCC: true
+INSTALL_CLANG: false
+TOOLS:
+  - git
+  - vim
+  - make
+```
+
+```jinja2
+# Dockerfile.j2
+FROM {{ BENCH_NAME }}:ubuntu
+
+{% if INSTALL_GCC %}
+RUN sudo apt-get install -y gcc g++
+{% endif %}
+
+{% if INSTALL_CLANG %}
+RUN sudo apt-get install -y clang
+{% endif %}
+
+{% for tool in TOOLS %}
+RUN sudo apt-get install -y {{ tool }}
+{% endfor %}
+```
+
+#### 示例 3：使用命令行覆盖变量
+
+```bash
+# 使用默认配置构建
+./kyberdocker
+
+# 使用自定义 BENCH_NAME
+./kyberdocker -e BENCH_NAME=myregistry/mybench
+
+# 开启调试模式
+./kyberdocker -e DEBUG=true -e LOG_LEVEL=verbose
+```
+
+### 8. 配置文件查找顺序
+
+当使用 `-w` 参数指定工作目录时，配置文件的查找顺序为：
+
+1. 当前命令执行目录
+2. `-w` 指定的工作目录
+
+模板文件和输出文件的路径解析遵循相同规则。
+
+---
 
 ## 构建规则和工具
 
