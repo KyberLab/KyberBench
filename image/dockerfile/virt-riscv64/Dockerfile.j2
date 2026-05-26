@@ -1,14 +1,7 @@
-#
-#                                 vmRT-Thread
-#
-# Copyright (c) 2022-2024, Shanghai Real-Thread Electronic Technology Co., Ltd.
-# All right reserved.
-#
-# Republication, copying or redistribution of this source code by any means is
-# expressly prohibited without a prior written permission.
+#                                 KyberBench
+# Copyright (c) 2025-2026, Kyber Development Team, all right reserved.
 #
 FROM {{ BENCH_NAME }}:qemu
-
 
 
 RUN sudo apt-get remove -y gcc-multilib
@@ -21,6 +14,13 @@ RUN sudo apt-get remove -y gcc-multilib
 COPY dockpin-apt.lock /tmp
 RUN sudo /usr/local/sbin/dockpin apt install -p /tmp/dockpin-apt.lock
 
+# Install RISC-V cross-compilation toolchain
+RUN sudo apt-get update && sudo apt-get install -y \
+    gcc-riscv64-linux-gnu \
+    g++-riscv64-linux-gnu \
+    binutils-riscv64-linux-gnu \
+    libc6-dev-riscv64-cross \
+    && sudo rm -rf /var/lib/apt/lists/*
 
 ENV RUSTUP_HOME={{ RUSTUP_HOME }}
 ENV CARGO_HOME={{ CARGO_HOME }}
@@ -51,4 +51,7 @@ RUN echo "export RUSTUP_DIST_SERVER={{ RUSTUP_DIST_SERVER }}" | sudo tee -a {{ C
 	echo ". {{ CARGO_HOME }}/env" | sudo tee -a {{ BENCH_INITRC }}
 
 RUN sudo chmod -R o+rw {{ RUSTUP_HOME }} {{ CARGO_HOME }}
+
+# Add RISC-V toolchain to PATH
+RUN echo "export PATH=/usr/riscv64-linux-gnu/bin:\$PATH" | sudo tee -a {{ BENCH_INITRC }}
 
